@@ -15,7 +15,7 @@ namespace MyGame.Controller
         {
             var entityToAdd = new Entity
             {
-                PosX = 0,
+                PosX = Map.Trenches[0],
                 PosY = rnd.Next(ViewGraphics.SpriteRectangleSize, Map.MapHeight - ViewGraphics.SpriteRectangleSize - Interface.ButtonsHeight),
                 IdleFrames = 5,
                 RunFrames = 8,
@@ -24,6 +24,7 @@ namespace MyGame.Controller
             };
             GameModel.AllUnits.Add(entityToAdd);
             GameModel.PlayerUnits.Add(entityToAdd);
+            entityToAdd.MoveToNextTrench();
         }
 
         public static void AttackButton_Click(object sender, EventArgs e)
@@ -44,11 +45,10 @@ namespace MyGame.Controller
 
         public static void SuppliesButtonOnClick(object sender, EventArgs e)
         {
-            var maxTrenchCoord = GameModel.PlayerUnits.Where(x => Map.Trenches.Any(i => x.PosX >= i)).Max(x => x.PosX);
+            var maxTrenchCord = GameModel.PlayerUnits.Where(x => Map.Trenches.Any(i => x.PosX >= i)).Max(x => x.PosX);
             foreach (var unit in GameModel.PlayerUnits.Where(unit => unit.IsInTrench))
             {
-                if(unit.PosX != maxTrenchCoord)
-                    unit.MoveToNextTrench();
+                unit.MoveToAllyTrench(maxTrenchCord);
             }
         }
     }

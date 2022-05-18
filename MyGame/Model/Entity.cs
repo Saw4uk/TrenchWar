@@ -12,15 +12,16 @@ namespace MyGame.Model
     {
         public int PosX;
         public int PosY;
-        public Point Location => new Point(PosX, PosY);
+
         public Image SpriteList;
         public int IdleFrames;
         public int RunFrames;
         public bool IsAlive = true;
+        public bool IsEnemy;
         public int Flip = 1;
         public bool IsAttacking;
         public bool IsFallingBack;
-        public bool IsInTrench;
+        public bool IsInTrench = true;
         public int CurrentAnimation;
         public int CurrentFrame;
 
@@ -43,7 +44,12 @@ namespace MyGame.Model
         public void MoveToNextTrench()
         {
             CurrentAnimation = 1;
-            Flip = 1;
+            if (IsEnemy)
+                Flip = -1;
+            else
+            {
+                Flip = 1;
+            }
             IsInTrench = false;
             IsFallingBack = false;
             IsAttacking = true;
@@ -52,10 +58,21 @@ namespace MyGame.Model
         public void FallBack()
         {
             CurrentAnimation = 1;
-            Flip = -1;
+            if (IsEnemy)
+                Flip = 1;
+            else
+            {
+                Flip = -1;
+            }
             IsInTrench = false;
             IsAttacking = false;
             IsFallingBack = true;
+        }
+
+        public void MoveToAllyTrench(int maxTrenchCord)
+        {
+            if (PosX != maxTrenchCord)
+                MoveToNextTrench();
         }
     }
 }

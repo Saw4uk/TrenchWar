@@ -14,8 +14,9 @@ namespace MyGame.View
         public static int MapHeight = MapImage.Height;
         public static int MapWidth = MapImage.Width;
 
-        public static int[] Trenches = new int[]
+        public static int[] Trenches =
         {
+            10,
             100,
             400,
             800,

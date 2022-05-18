@@ -31,6 +31,7 @@ namespace MyGame
             MakeInterface();
             MakeFormBorders();
             MakeUpdateFunction();
+            EnemyAI.StartWar();
         }
 
         public void MakeUpdateFunction()
@@ -48,7 +49,12 @@ namespace MyGame
                 {
                     if (unit.IsFallingBack)
                     {
-                        unit.Flip = 1;
+                        if(unit.IsEnemy)
+                            unit.Flip = -1;
+                        else
+                        {
+                            unit.Flip = 1;
+                        }
                         unit.CurrentAnimation = 0;
                         unit.IsFallingBack = false;
                     }
@@ -59,12 +65,22 @@ namespace MyGame
 
                 if (unit.IsAttacking)
                 {
-                    unit.Move(1,0);
+                    if(unit.IsEnemy)
+                        unit.Move(-1,0);
+                    else
+                    {
+                        unit.Move(1,0);
+                    }
                 }
                 
                 if (unit.IsFallingBack)
                 {
-                    unit.Move(-1,0);
+                    if(unit.IsEnemy)
+                        unit.Move(1,0);
+                    else
+                    {
+                        unit.Move(-1,0);
+                    }
                 }
 
                 if (Map.Trenches.Any(x => x == unit.PosX))

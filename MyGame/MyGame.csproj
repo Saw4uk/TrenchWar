@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\ButtonController.cs" />
+    <Compile Include="Model\EnemyAI.cs" />
     <Compile Include="Model\Entity.cs" />
     <Compile Include="Model\GameModel.cs" />
     <Compile Include="View\Form1.cs">
@@ -88,6 +89,7 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="Sprites\Dwarf.png" />
+    <Content Include="Sprites\Gladiator.png" />
     <Content Include="Sprites\Map.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
