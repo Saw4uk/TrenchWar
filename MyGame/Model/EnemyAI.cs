@@ -48,6 +48,7 @@ namespace MyGame.Model
                     break;
                 case Strategy.Defend:
                     SpawnEnemies(5);
+                    AllSuppliesToMainTrench();
                     CurrentStrategy = Strategy.WaitOrders;
                     break;
                 case Strategy.Rush:
@@ -87,12 +88,15 @@ namespace MyGame.Model
             if (GameModel.PlayerUnits.Count - GameModel.EnemyUnits.Count >= GameModel.EnemyUnits.Count / 2)
             {
                 SpawnEnemies(4);
-                AllSuppliesToAttackTrench();
+                AllSuppliesToMainTrench();
             }
-            else if (GameModel.PlayerUnits.Count < GameModel.EnemyUnits.Count / 2)
+            else if (GameModel.PlayerUnits.Count <= GameModel.EnemyUnits.Count / 2)
                 CurrentStrategy = Strategy.Rush;
-            else if (GameModel.PlayerUnits.Count < GameModel.EnemyUnits.Count)
+            else if (GameModel.PlayerUnits.Count <= GameModel.EnemyUnits.Count)
                 CurrentStrategy = Strategy.Attack;
+            else
+                CurrentStrategy = Strategy.WaitOrders;
+            
         }
 
         private static void Attack()
@@ -104,7 +108,7 @@ namespace MyGame.Model
             SpawnEnemies(2);
         }
 
-        private static void AllSuppliesToAttackTrench()
+        private static void AllSuppliesToMainTrench()
         {
             var maxTrenchCord = GameModel.EnemyUnits.Where(x => Map.Trenches.Any(i => x.PosX <= i)).Min(x => x.PosX);
             foreach (var unit in GameModel.EnemyUnits)
