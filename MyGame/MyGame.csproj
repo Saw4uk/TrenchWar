@@ -88,7 +88,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Sprites\AllyOfficer.png" />
     <Content Include="Sprites\Dwarf.png" />
+    <Content Include="Sprites\EnemyOfficer.png" />
     <Content Include="Sprites\Gladiator.png" />
     <Content Include="Sprites\Map.png" />
   </ItemGroup>

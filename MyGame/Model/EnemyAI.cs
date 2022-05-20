@@ -28,8 +28,9 @@ namespace MyGame.Model
             EnemyOrdersLogicTimer.Interval = 5000;
             EnemyOrdersLogicTimer.Tick += GetOrders;
             EnemyOrdersLogicTimer.Start();
-            CurrentStrategy = Strategy.WaitOrders;
-            SpawnEnemies(5);
+            CurrentStrategy = Strategy.Rush;
+            GameModel.SpawnUnits(5,Interface.ButtonsHeight + ViewGraphics.SpriteRectangleSize, Map.MapHeight - ViewGraphics.SpriteRectangleSize);
+            SpawnEnemies(10);
         }
 
         private static void GetOrders(object sender, EventArgs e)
@@ -129,7 +130,7 @@ namespace MyGame.Model
             var entityToAdd = new Entity
             {
                 PosX = Map.MapWidth - ViewGraphics.SpriteRectangleSize,
-                PosY = rnd.Next(ViewGraphics.SpriteRectangleSize, Map.MapHeight - ViewGraphics.SpriteRectangleSize - Interface.ButtonsHeight),
+                PosY = rnd.Next(ViewGraphics.SpriteRectangleSize + Interface.ButtonsHeight, Map.MapHeight - ViewGraphics.SpriteRectangleSize - Interface.ButtonsHeight),
                 IdleFrames = 5,
                 RunFrames = 8,
                 DeadFrames = 7,

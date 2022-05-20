@@ -24,7 +24,7 @@ namespace MyGame.Model
         public bool IsEnemy;
         public bool IsReadyToClean;
         public int Flip = 1;
-        public int FireRange = 300;
+        public int FireRange = 150;
         public int PercentOfHit = 70;
         public bool IsAttacking;
         public bool IsShooting;
@@ -123,7 +123,17 @@ namespace MyGame.Model
                     currentPercentOfHit /= 2;
                 PlayShootAnimation();
                 if (target.CheckHit(currentPercentOfHit))
+                {
                     target.IsAlive = 0;
+                    if (target.IsEnemy)
+                    {
+                        GameModel.PlayerMoney += 5;
+                    }
+                    else
+                    {
+                        GameModel.PlayerMoney += 2;
+                    }
+                }
             }
         }
         public bool CheckHit(int percent)

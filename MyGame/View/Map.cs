@@ -16,10 +16,10 @@ namespace MyGame.View
 
         public static int[] Trenches =
         {
-            10,
-            100,
-            400,
-            800,
+            86,
+            250,
+            500,
+            750,
             1000
         };
     }

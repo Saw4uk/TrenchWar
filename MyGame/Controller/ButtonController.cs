@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using MyGame.Model;
 using MyGame.View;
 
@@ -11,23 +12,19 @@ namespace MyGame.Controller
     public static class ButtonController
     {
         private static Random rnd = new Random();
+        public static bool PreparingToGetSupplies;
+        public static int LowerSuppliesPosition;
+        public static int UpperSuppliesPosition;
         public static void AddButtonOnClick(object sender, EventArgs e)
         {
-            var entityToAdd = new Entity
-            {
-                PosX = Map.Trenches[0],
-                PosY = rnd.Next(ViewGraphics.SpriteRectangleSize, Map.MapHeight - ViewGraphics.SpriteRectangleSize - Interface.ButtonsHeight),
-                IdleFrames = 5,
-                RunFrames = 8,
-                DeadFrames = 7,
-                CurrentLimit = 5,
-                AttackFrames = 7,
-                SpriteList = ViewGraphics.FriendlyUnitSprite,
+            GameModel.PlayerMoney -= 25;
+            PreparingToGetSupplies = true;
+        }
 
-            };
-            GameModel.AllUnits.Add(entityToAdd);
-            GameModel.PlayerUnits.Add(entityToAdd);
-            entityToAdd.MoveToNextTrench();
+        public static void OnMouseClick(object sender, MouseEventArgs e)
+        {
+            PreparingToGetSupplies = false;
+            GameModel.SpawnUnits(3,LowerSuppliesPosition,UpperSuppliesPosition);
         }
 
         public static void AttackButton_Click(object sender, EventArgs e)
