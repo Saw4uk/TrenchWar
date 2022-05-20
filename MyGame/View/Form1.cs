@@ -19,7 +19,9 @@ namespace MyGame
         private Button AttackButton;
         private Button FallBackButton;
         private Button SuppliesButton;
+        private Button OrderAttackButton;
         public Timer UpdateTimer;
+        public Timer CleanCorpsTimer;
         public Form1()
         {
             InitializeComponent();
@@ -39,13 +41,28 @@ namespace MyGame
             UpdateTimer = new Timer {Interval = 50};
             UpdateTimer.Tick += Update;
             UpdateTimer.Start();
+
+            CleanCorpsTimer = new Timer {Interval = 30000};
+            CleanCorpsTimer.Tick += GameModel.CleanCorps;
+            CleanCorpsTimer.Start();
         }
 
         private void Update(object sender, EventArgs e)
         {
             foreach (var unit in GameModel.AllUnits)
             {
-                if (unit.IsInTrench)
+                unit.FindAndTryToKillEnemy();
+            }
+
+            foreach (var unit in GameModel.AllUnits)
+            {
+                if (unit.IsAlive == 0)
+                {
+                    unit.DieWithHonor();
+                    continue;
+                }
+
+                if (unit.IsInTrench && !unit.IsShooting)
                 {
                     if (unit.IsFallingBack)
                     {
@@ -61,9 +78,10 @@ namespace MyGame
                     unit.CurrentAnimation = 0;
                     unit.IsAttacking = false;
                     unit.IsInTrench = true;
+                    unit.CurrentLimit = unit.IdleFrames;
                 }
 
-                if (unit.IsAttacking)
+                if (unit.IsAttacking && !unit.IsShooting)
                 {
                     if(unit.IsEnemy)
                         unit.Move(-1,0);
@@ -73,7 +91,7 @@ namespace MyGame
                     }
                 }
                 
-                if (unit.IsFallingBack)
+                if (unit.IsFallingBack && !unit.IsShooting)
                 {
                     if(unit.IsEnemy)
                         unit.Move(1,0);
@@ -83,13 +101,16 @@ namespace MyGame
                     }
                 }
 
-                if (Map.Trenches.Any(x => x == unit.PosX))
+                if (Map.Trenches.Any(x => x == unit.PosX && unit.IsReadyToClean == false) && !unit.IsShooting)
                 {
                     unit.IsInTrench = true;
+                    unit.CurrentAnimation = 0;
+                    unit.CurrentLimit = unit.IdleFrames;
                 }
             }
             Invalidate();
         }
+
 
         public void MakeFormBorders()
         {
@@ -134,8 +155,16 @@ namespace MyGame
             SuppliesButton.Text = "Стянуть подкрепления";
             SuppliesButton.Click += ButtonController.SuppliesButtonOnClick;
             Controls.Add(SuppliesButton);
-        }
 
+            OrderAttackButton = new Button
+            {
+                Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
+                Location = new Point(Interface.ButtonsEmptyBorders * 5 - Interface.ButtonsWidth / 2, Map.MapHeight - Interface.ButtonsHeight)
+            };
+            OrderAttackButton.Text = "Убить кого-нибудь";
+            OrderAttackButton.Click += ButtonController.OrderAttackButtonOnClick;
+            Controls.Add(OrderAttackButton);
+        }
 
 
         private void Form1_Paint(object sender, PaintEventArgs e)

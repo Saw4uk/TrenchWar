@@ -20,7 +20,7 @@ namespace MyGame.Model
     {
         private static Timer EnemyOrdersLogicTimer;
         private static Random rnd = new Random();
-        private static Strategy CurrentStrategy;
+        public static Strategy CurrentStrategy;
         public static void StartWar()
         {
 
@@ -132,8 +132,11 @@ namespace MyGame.Model
                 PosY = rnd.Next(ViewGraphics.SpriteRectangleSize, Map.MapHeight - ViewGraphics.SpriteRectangleSize - Interface.ButtonsHeight),
                 IdleFrames = 5,
                 RunFrames = 8,
+                DeadFrames = 7,
+                CurrentLimit = 5,
+                AttackFrames = 7,
                 IsEnemy = true,
-                SpriteList = ViewGraphics.EnemyUnitSprite
+                SpriteList = ViewGraphics.EnemyUnitSprite,
 
             };
             GameModel.AllUnits.Add(entityToAdd);

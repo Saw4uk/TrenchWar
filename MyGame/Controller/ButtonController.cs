@@ -19,8 +19,11 @@ namespace MyGame.Controller
                 PosY = rnd.Next(ViewGraphics.SpriteRectangleSize, Map.MapHeight - ViewGraphics.SpriteRectangleSize - Interface.ButtonsHeight),
                 IdleFrames = 5,
                 RunFrames = 8,
-                SpriteList = ViewGraphics.FriendlyUnitSprite
-                
+                DeadFrames = 7,
+                CurrentLimit = 5,
+                AttackFrames = 7,
+                SpriteList = ViewGraphics.FriendlyUnitSprite,
+
             };
             GameModel.AllUnits.Add(entityToAdd);
             GameModel.PlayerUnits.Add(entityToAdd);
@@ -50,6 +53,11 @@ namespace MyGame.Controller
             {
                 unit.MoveToAllyTrench(maxTrenchCord);
             }
+        }
+
+        public static void OrderAttackButtonOnClick(object sender, EventArgs e)
+        {
+            EnemyAI.CurrentStrategy = Strategy.Rush;
         }
     }
 }
