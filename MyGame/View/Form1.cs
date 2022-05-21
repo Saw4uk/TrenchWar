@@ -3,30 +3,39 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MyGame.Controller;
 using MyGame.Model;
 using MyGame.View;
+using Color = System.Drawing.Color;
+using Pen = System.Drawing.Pen;
 
 namespace MyGame
 {
     public partial class Form1 : Form
     {
-        private Button AddButton;
+        private Button LittleRiflemanSquadButton;
+        private Button MiddleRiflemanSquadButton;
+        private Button LargeRiflemanSquadButton;
         private Button AttackButton;
         private Button FallBackButton;
         private Button SuppliesButton;
-        private Button OrderAttackButton;
+        private PictureBox MoneyPictureBox;
+        private PictureBox DocumentPictureBox;
         private Label PlayerMoneyLabel;
+        private Label PlayerDocumentsLabel;
+        private Label InfoLabel;
         private FlowLayoutPanel UpperInterfacePanel;
         private FlowLayoutPanel LowerInterfacePanel;
-        private const int SpawnSizeConst = 60;
         public Timer UpdateTimer;
         public Timer CleanCorpsTimer;
         public Timer AddMoneyTimer;
+        public MediaPlayer MainPlayer;
 
         public Form1()
         {
@@ -40,11 +49,27 @@ namespace MyGame
             MakeFormBorders();
             MakeUpdateFunction();
             EnemyAI.StartWar();
+            MainPlayer = new MediaPlayer();
+            MainPlayer.Open(new Uri(Interface.Tracks[Interface.CurrentTrack],UriKind.Relative));
+            MainPlayer.Play();
+            MainPlayer.MediaEnded += MainPlayerOnMediaEnded;
+        }
+
+        private void MainPlayerOnMediaEnded(object sender, EventArgs e)
+        {
+            if (Interface.CurrentTrack == Interface.Tracks.Length - 1)
+            {
+                Interface.CurrentTrack = 0;
+            }
+            else
+            {
+                Interface.CurrentTrack++;
+            }
         }
 
         public void MakeUpdateFunction()
         {
-            UpdateTimer = new Timer {Interval = 50};
+            UpdateTimer = new Timer {Interval = 75};
             UpdateTimer.Tick += Update;
             UpdateTimer.Start();
 
@@ -113,15 +138,19 @@ namespace MyGame
                     }
                 }
 
-                if (Map.Trenches.Any(x => x == unit.PosX && unit.IsReadyToClean == false) && !unit.IsShooting)
+                if (Map.Trenches.Any(x => x == unit.PosX && unit.IsReadyToClean == false) && !unit.IsShooting && !unit.IsInTrench)
                 {
                     unit.IsInTrench = true;
                     unit.CurrentAnimation = 0;
+                    unit.CurrentFrame = 0;
                     unit.CurrentLimit = unit.IdleFrames;
                 }
             }
             CheckInterface();
-            PlayerMoneyLabel.Text = $"Текущее количество средств : {GameModel.PlayerMoney}";
+            PlayerMoneyLabel.Text = $"{GameModel.PlayerMoney}";
+            PlayerDocumentsLabel.Text = $"{GameModel.PlayerSecretDocuments}";
+            InfoLabel.Text =
+                $"Ваши потери : {GameModel.PlayerUnitsKilled} ч. \nПотери противника : {GameModel.EnemyKilled} ч.";
             Invalidate();
         }
 
@@ -129,17 +158,35 @@ namespace MyGame
         {
             if (GameModel.PlayerMoney < 25 || ButtonController.PreparingToGetSupplies)
             {
-                AddButton.Enabled = false;
+                LittleRiflemanSquadButton.Enabled = false;
             }
             else
             {
-                AddButton.Enabled = true;
+                LittleRiflemanSquadButton.Enabled = true;
+            }
+
+            if (GameModel.PlayerMoney < 35 || ButtonController.PreparingToGetSupplies)
+            {
+                MiddleRiflemanSquadButton.Enabled = false;
+            }
+            else
+            {
+                MiddleRiflemanSquadButton.Enabled = true;
+            }
+
+            if (GameModel.PlayerMoney < 65 || ButtonController.PreparingToGetSupplies)
+            {
+                LargeRiflemanSquadButton.Enabled = false;
+            }
+            else
+            {
+                LargeRiflemanSquadButton.Enabled = true;
             }
         }
         public void MakeFormBorders()
         {
             BackgroundImage = Map.MapImage;
-            Height = Map.MapHeight+Interface.ButtonsHeight;
+            Height = Map.MapHeight+Interface.ButtonsHeight+ Interface.ButtonsHeight/2 - 7;
             Width = Map.MapWidth;
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
@@ -147,86 +194,130 @@ namespace MyGame
 
         public void MakeInterface()
         {
+            Interface.AddFonts();
             MouseClick += ButtonController.OnMouseClick;
 
             LowerInterfacePanel = new FlowLayoutPanel
             {
-                Location = new Point(0,Map.MapHeight - Interface.ButtonsHeight),
+                Location = new Point(0,Map.MapHeight),
                 Height = Interface.ButtonsHeight + 20,
                 Width = Map.MapWidth,
-                BackColor = Color.DarkGreen
+                BackColor = Interface.InterfaceColor
             };
             Controls.Add(LowerInterfacePanel);
 
-            AddButton = new Button{ Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
-                Location = new Point(Interface.ButtonsEmptyBorders - Interface.ButtonsWidth/2,Map.MapHeight - Interface.ButtonsHeight) };
-            AddButton.Text = "Призвать резервы";
-            AddButton.Click += ButtonController.AddButtonOnClick;
-            AddButton.BackColor = Color.Gainsboro;
-            LowerInterfacePanel.Controls.Add(AddButton);
+            LittleRiflemanSquadButton = new Button{ Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
+            };
+            LittleRiflemanSquadButton.Image = ViewGraphics.LittleRiflemanSquadImage;
+            LittleRiflemanSquadButton.Click += ButtonController.LittleRiflemanButtonOnClick;
+            LowerInterfacePanel.Controls.Add(LittleRiflemanSquadButton);
+
+            MiddleRiflemanSquadButton = new Button
+            {
+                Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
+            };
+            MiddleRiflemanSquadButton.Image = ViewGraphics.MiddleRiflemanSquadImage; 
+            MiddleRiflemanSquadButton.Click += ButtonController.MiddleRiflemanButtonOnClick;
+            LowerInterfacePanel.Controls.Add(MiddleRiflemanSquadButton);
+
+
+            LargeRiflemanSquadButton = new Button
+            {
+                Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
+            };
+            LargeRiflemanSquadButton.Image = ViewGraphics.LargeRiflemanSquadImage;
+            LargeRiflemanSquadButton.Click += ButtonController.LargeRiflemanButtonOnClick;
+            LowerInterfacePanel.Controls.Add(LargeRiflemanSquadButton);
 
             AttackButton = new Button
             {
                 Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
-                Location = new Point(Interface.ButtonsEmptyBorders*2 - Interface.ButtonsWidth / 2, Map.MapHeight - Interface.ButtonsHeight)
+                Image = ViewGraphics.AttackButtonImage
             };
-            AttackButton.Text = "В атаку!";
-            AttackButton.BackColor = Color.Gainsboro;
             AttackButton.Click += ButtonController.AttackButton_Click;
             LowerInterfacePanel.Controls.Add(AttackButton);
 
             FallBackButton = new Button
             {
                 Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
-                Location = new Point(Interface.ButtonsEmptyBorders * 3 - Interface.ButtonsWidth / 2, Map.MapHeight - Interface.ButtonsHeight)
+                Image = ViewGraphics.FallBackButtonImage
             };
-            FallBackButton.Text = "Отступаем!";
-            FallBackButton.BackColor = Color.Gainsboro;
             FallBackButton.Click += ButtonController.FallBackButtonOnClick;
             LowerInterfacePanel.Controls.Add(FallBackButton);
 
             SuppliesButton = new Button
             {
                 Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
-                Location = new Point(Interface.ButtonsEmptyBorders * 4 - Interface.ButtonsWidth / 2, Map.MapHeight - Interface.ButtonsHeight)
+                Image = ViewGraphics.ToMainTrenchImage
+
             };
-            SuppliesButton.Text = "Стянуть подкрепления";
             SuppliesButton.Click += ButtonController.SuppliesButtonOnClick;
-            SuppliesButton.BackColor = Color.Gainsboro;
             LowerInterfacePanel.Controls.Add(SuppliesButton);
 
-            OrderAttackButton = new Button
-            {
-                Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
-                Location = new Point(Interface.ButtonsEmptyBorders * 5 - Interface.ButtonsWidth / 2, Map.MapHeight - Interface.ButtonsHeight)
-            };
-            OrderAttackButton.Text = "Убить кого-нибудь";
-            OrderAttackButton.Click += ButtonController.OrderAttackButtonOnClick;
-            OrderAttackButton.BackColor = Color.Gainsboro;
-            LowerInterfacePanel.Controls.Add(OrderAttackButton);
 
             UpperInterfacePanel = new FlowLayoutPanel
             {
                 Location = new Point(0,0),
-                BackColor = Color.DarkGreen,
-                Height = Interface.ButtonsHeight,
+                BackColor = Interface.ButtonsColor,
+                Height = Interface.ButtonsHeight/2,
                 Width = Map.MapWidth
             };
             Controls.Add(UpperInterfacePanel);
 
+            MoneyPictureBox = new PictureBox 
+            { 
+                Height = 55,
+                Width = 55,
+                Image = ViewGraphics.MoneyImage
+            };
+            UpperInterfacePanel.Controls.Add(MoneyPictureBox);
+
             PlayerMoneyLabel = new Label()
             {
-                Text = $"Текущее количество средств : {GameModel.PlayerMoney}",
-                Height = Interface.ButtonsHeight,
-                Width = Interface.ButtonsWidth * 2,
-                TextAlign = ContentAlignment.MiddleLeft
+                Text = $"{GameModel.PlayerMoney}",
+                Height = Interface.ButtonsHeight/2,
+                Width = Interface.ButtonsWidth,
+                TextAlign = ContentAlignment.MiddleLeft,
+                BackColor = Interface.ButtonsColor,
+                Font = Interface.BigFont
             };
             UpperInterfacePanel.Controls.Add(PlayerMoneyLabel);
+
+            DocumentPictureBox = new PictureBox
+            {
+                Height = 55,
+                Width = 55,
+                Image = ViewGraphics.DocumentsImage
+            };
+            UpperInterfacePanel.Controls.Add(DocumentPictureBox);
+
+            PlayerDocumentsLabel = new Label
+            {
+                Text = $"{GameModel.PlayerSecretDocuments}",
+                Height = Interface.ButtonsHeight/2,
+                Width = Interface.ButtonsWidth * 3,
+                TextAlign = ContentAlignment.MiddleLeft,
+                BackColor = Interface.ButtonsColor,
+                Font = Interface.BigFont
+            };
+            UpperInterfacePanel.Controls.Add(PlayerDocumentsLabel);
+
+            InfoLabel = new Label
+            {
+                Text = $"Ваши потери : {GameModel.PlayerUnitsKilled} ч. \nПотери противника : {GameModel.EnemyKilled} ч.",
+                Height = Interface.ButtonsHeight / 2,
+                Width = Interface.ButtonsWidth * 3,
+                TextAlign = ContentAlignment.MiddleLeft,
+                BackColor = Interface.ButtonsColor,
+                Font = Interface.MainFont
+            };
+            UpperInterfacePanel.Controls.Add(InfoLabel);
         }
 
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
+            var spawnSizeConst = ButtonController.SpawnSizeConst;
             var graphics = e.Graphics;
             foreach (var unit in GameModel.AllUnits)
             {
@@ -236,24 +327,24 @@ namespace MyGame
             var mouseY = MousePosition.Y - Location.Y - 7;
             if (ButtonController.PreparingToGetSupplies)
             {
-                if (mouseY <= Interface.ButtonsHeight + SpawnSizeConst)
+                if (mouseY <= Interface.ButtonsHeight/2 + spawnSizeConst)
                 {
-                    graphics.DrawLine(new Pen(Color.Gold, 3f),new Point(0, Interface.ButtonsHeight + 2*SpawnSizeConst),new Point(mouseX, Interface.ButtonsHeight + 2*SpawnSizeConst));
+                    graphics.DrawLine(new Pen(Color.Gold, 3f),new Point(0, Interface.ButtonsHeight/2 + 2*spawnSizeConst),new Point(mouseX, Interface.ButtonsHeight/2 + 2*spawnSizeConst));
                     ButtonController.LowerSuppliesPosition = Interface.ButtonsHeight + ViewGraphics.SpriteRectangleSize;
-                    ButtonController.UpperSuppliesPosition = Interface.ButtonsHeight + 2*SpawnSizeConst;
+                    ButtonController.UpperSuppliesPosition = Interface.ButtonsHeight + 2*spawnSizeConst;
                 }
-                else if(mouseY >= Map.MapHeight - Interface.ButtonsHeight - SpawnSizeConst)
+                else if(mouseY >= Map.MapHeight + Interface.ButtonsHeight/2 - spawnSizeConst)
                 {
-                    graphics.DrawLine(new Pen(Color.Gold, 3f), new Point(0, Map.MapHeight - Interface.ButtonsHeight - 2*SpawnSizeConst), new Point(mouseX, Map.MapHeight - Interface.ButtonsHeight - 2*SpawnSizeConst));
-                    ButtonController.LowerSuppliesPosition = Map.MapHeight - Interface.ButtonsHeight - SpawnSizeConst*2 - ViewGraphics.SpriteRectangleSize;
+                    graphics.DrawLine(new Pen(Color.Gold, 3f), new Point(0, Map.MapHeight + Interface.ButtonsHeight/2 - 2*spawnSizeConst), new Point(mouseX, Map.MapHeight + Interface.ButtonsHeight/2 - 2*spawnSizeConst));
+                    ButtonController.LowerSuppliesPosition = Map.MapHeight - Interface.ButtonsHeight - spawnSizeConst*2 - ViewGraphics.SpriteRectangleSize;
                     ButtonController.UpperSuppliesPosition = Map.MapHeight - Interface.ButtonsHeight;
                 }
                 else
                 {
-                    graphics.DrawLine(new Pen(Color.Gold, 3f), new Point(0, mouseY + SpawnSizeConst), new Point(mouseX, mouseY + SpawnSizeConst));
-                    graphics.DrawLine(new Pen(Color.Gold, 3f), new Point(0, mouseY - SpawnSizeConst), new Point(mouseX, mouseY - SpawnSizeConst));
-                    ButtonController.UpperSuppliesPosition = mouseY + SpawnSizeConst;
-                    ButtonController.LowerSuppliesPosition = mouseY - SpawnSizeConst;
+                    graphics.DrawLine(new Pen(Color.Gold, 3f), new Point(0, mouseY + spawnSizeConst), new Point(mouseX, mouseY + spawnSizeConst));
+                    graphics.DrawLine(new Pen(Color.Gold, 3f), new Point(0, mouseY - spawnSizeConst), new Point(mouseX, mouseY - spawnSizeConst));
+                    ButtonController.UpperSuppliesPosition = mouseY + spawnSizeConst;
+                    ButtonController.LowerSuppliesPosition = mouseY - spawnSizeConst;
                 }
             }
         }

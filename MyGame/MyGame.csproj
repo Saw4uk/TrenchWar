@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,6 +45,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\ButtonController.cs" />
@@ -82,17 +84,30 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Sprites\Pixel Times Bold.ttf" />
+    <None Include="Sprites\Pixel Times.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="Sprites\AllyOfficer.png" />
-    <Content Include="Sprites\Dwarf.png" />
-    <Content Include="Sprites\EnemyOfficer.png" />
-    <Content Include="Sprites\Gladiator.png" />
+    <Content Include="Sprites\MoneySound.wav" />
+    <Content Include="Sprites\Morze.wav" />
+    <Content Include="Sprites\Steps.wav" />
+    <Content Include="Sprites\Track2.mp3" />
+    <Content Include="Sprites\AllySoldierSpriteSheet.png" />
+    <Content Include="Sprites\Attack.png" />
+    <Content Include="Sprites\Documents.png" />
+    <Content Include="Sprites\EnemySoldierSpriteSheet.png" />
+    <Content Include="Sprites\FallBack.png" />
+    <Content Include="Sprites\Track1.mp3" />
+    <Content Include="Sprites\LargeRiflemanSqad.png" />
+    <Content Include="Sprites\LittleRiflemanSqad.png" />
     <Content Include="Sprites\Map.png" />
+    <Content Include="Sprites\MiddleRiflemanSqad.png" />
+    <Content Include="Sprites\Money.png" />
+    <Content Include="Sprites\RifleShoot.wav" />
+    <Content Include="Sprites\ToMainTrench.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

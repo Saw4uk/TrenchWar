@@ -15,6 +15,10 @@ namespace MyGame.Model
         public static List<Entity> EnemyUnits = new List<Entity>();
         public static Random HitRandom = new Random();
         public static int PlayerMoney = 100;
+        public static int PlayerSecretDocuments = 1;
+        public static int MaxPlayerTrenches = 1;
+        public static int EnemyKilled;
+        public static int PlayerUnitsKilled;
 
         public static double GetDistance(Point point1, Point point2)
         {
@@ -28,19 +32,19 @@ namespace MyGame.Model
             {
                 var entityToAdd = new Entity
                 {
-                    PosX = 0 + ViewGraphics.SpriteRectangleSize,
+                    PosX = HitRandom.Next(0,35),
                     PosY = HitRandom.Next(lowerPos, upperPos),
                     //(ViewGraphics.SpriteRectangleSize + Interface.ButtonsHeight, Map.MapHeight - ViewGraphics.SpriteRectangleSize - Interface.ButtonsHeight)
-                    IdleFrames = 5,
+                    IdleFrames = 4,
                     RunFrames = 8,
                     DeadFrames = 7,
-                    CurrentLimit = 5,
-                    AttackFrames = 7,
+                    CurrentLimit = 4,
+                    AttackFrames = 14,
                     SpriteList = ViewGraphics.FriendlyUnitSprite,
 
                 };
-                GameModel.AllUnits.Add(entityToAdd);
-                GameModel.PlayerUnits.Add(entityToAdd);
+                AllUnits.Add(entityToAdd);
+                PlayerUnits.Add(entityToAdd);
                 entityToAdd.MoveToNextTrench();
             }
         }
@@ -61,7 +65,28 @@ namespace MyGame.Model
 
         public static void AddMoney(object sender, EventArgs e)
         {
-            PlayerMoney += 50;
+            Interface.PlayMoneySound();
+            PlayerMoney += GetNumberOfPlayerTrenches()*35;
+        }
+
+        public static int GetNumberOfPlayerTrenches()
+        {
+            var result = 0;
+            for (var i = Map.Trenches.Length - 1; i >= 0; i--)
+            {
+                if (PlayerUnits.Any(x => x.PosX == Map.Trenches[i]))
+                {
+                    if (EnemyUnits.All(x => x.PosX != Map.Trenches[i]))
+                    {
+                        result = i + 1;
+                        break;
+                    }
+                }
+            }
+
+            if (result > MaxPlayerTrenches)
+                PlayerSecretDocuments += 1;
+            return result;
         }
     }
 }

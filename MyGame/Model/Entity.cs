@@ -23,13 +23,13 @@ namespace MyGame.Model
         public int IsAlive = 1;
         public bool IsEnemy;
         public bool IsReadyToClean;
-        public int Flip = 1;
-        public int FireRange = 150;
-        public int PercentOfHit = 70;
         public bool IsAttacking;
         public bool IsShooting;
         public bool IsFallingBack;
         public bool IsInTrench = true;
+        public int Flip = 1;
+        public int FireRange = 150;
+        public int PercentOfHit = 70;
         public int CurrentAnimation;
         public int CurrentFrame;
         public int CurrentLimit;
@@ -43,13 +43,14 @@ namespace MyGame.Model
                 {
                     CurrentAnimation = 0;
                     CurrentLimit = IdleFrames;
+                    IsShooting = false;
                 }
                 else
                 {
                     CurrentAnimation = 1;
                     CurrentLimit = RunFrames;
+                    IsShooting = false;
                 }
-                IsShooting = false;
             }
             graphics.DrawImage(
                 SpriteList,
@@ -76,6 +77,7 @@ namespace MyGame.Model
 
         public void MoveToNextTrench()
         {
+            if (IsShooting) return;
             CurrentAnimation = 1;
             CurrentLimit = RunFrames;
             if (IsEnemy)
@@ -84,6 +86,7 @@ namespace MyGame.Model
             {
                 Flip = 1;
             }
+
             IsInTrench = false;
             IsFallingBack = false;
             IsAttacking = true;
@@ -91,6 +94,7 @@ namespace MyGame.Model
 
         public void FallBack()
         {
+            if (IsShooting) return;
             CurrentAnimation = 1;
             CurrentLimit = RunFrames;
             if (IsEnemy)
@@ -118,51 +122,64 @@ namespace MyGame.Model
             var target = enemyUnits.FirstOrDefault(unit => GameModel.GetDistance(Location, unit.Location) <= FireRange && unit.IsAlive == 1);
             if (target != null)
             {
-                var currentPercentOfHit = PercentOfHit;
+                double currentPercentOfHit = PercentOfHit;
                 if (target.IsInTrench)
-                    currentPercentOfHit /= 2;
+                    currentPercentOfHit /= 1.5;
                 PlayShootAnimation();
                 if (target.CheckHit(currentPercentOfHit))
                 {
                     target.IsAlive = 0;
+                    target.MakeAllLogicFalse();
                     if (target.IsEnemy)
                     {
+                        GameModel.EnemyKilled++;
                         GameModel.PlayerMoney += 5;
                     }
                     else
                     {
+                        GameModel.PlayerUnitsKilled++;
                         GameModel.PlayerMoney += 2;
                     }
                 }
             }
         }
-        public bool CheckHit(int percent)
+        public bool CheckHit(double percent)
         {
             return percent >= GameModel.HitRandom.Next(0, 100);
         }
 
         public void DieWithHonor()
         {
-            if (CurrentAnimation == 4 && CurrentFrame == DeadFrames - 1)
+            if (CurrentAnimation == 3 && CurrentFrame == DeadFrames - 1)
             {
                 IsReadyToClean = true;
             }
             else
             {
-                CurrentAnimation = 4;
+                CurrentAnimation = 3;
                 CurrentLimit = DeadFrames;
                 IsInTrench = false;
                 IsAttacking = false;
+                IsShooting = false;
                 IsFallingBack = false;
             }
         }
 
         public void PlayShootAnimation()
         {
+            Interface.PlayShootSound();
             IsShooting = true;
             CurrentAnimation = 2;
             CurrentFrame = 0;
             CurrentLimit = AttackFrames;
+        }
+
+        public void MakeAllLogicFalse()
+        {
+            IsInTrench = false;
+            IsAttacking = false;
+            IsShooting = false;
+            IsFallingBack = false;
         }
     }
 }

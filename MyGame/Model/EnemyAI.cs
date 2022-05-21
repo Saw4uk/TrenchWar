@@ -131,11 +131,11 @@ namespace MyGame.Model
             {
                 PosX = Map.MapWidth - ViewGraphics.SpriteRectangleSize,
                 PosY = rnd.Next(ViewGraphics.SpriteRectangleSize + Interface.ButtonsHeight, Map.MapHeight - ViewGraphics.SpriteRectangleSize - Interface.ButtonsHeight),
-                IdleFrames = 5,
+                IdleFrames = 4,
                 RunFrames = 8,
                 DeadFrames = 7,
-                CurrentLimit = 5,
-                AttackFrames = 7,
+                CurrentLimit = 4,
+                AttackFrames = 14,
                 IsEnemy = true,
                 SpriteList = ViewGraphics.EnemyUnitSprite,
 
