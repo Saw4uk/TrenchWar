@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using MyGame.Controller;
 using MyGame.View;
 
 namespace MyGame.Model
@@ -14,21 +16,24 @@ namespace MyGame.Model
         public int PosX;
         public int PosY;
         public Point Location => new Point(PosX, PosY);
-
+        public Button GunnerButton;
         public Image SpriteList;
         public int IdleFrames;
         public int AttackFrames;
         public int RunFrames;
         public int DeadFrames;
+        public int OrderedPosition;
         public int IsAlive = 1;
         public bool IsEnemy;
         public bool IsReadyToClean;
         public bool IsAttacking;
         public bool IsShooting;
+        public bool IsButtonAddedToControls;
         public bool IsFallingBack;
+        public bool IsGunner;
         public bool IsInTrench = true;
         public int Flip = 1;
-        public int FireRange = 150;
+        public int FireRange = 130;
         public int PercentOfHit = 70;
         public int CurrentAnimation;
         public int CurrentFrame;
@@ -75,8 +80,21 @@ namespace MyGame.Model
             PosY += dy;
         }
 
-        public void MoveToNextTrench()
+        public void MoveToOrderedPosition()
         {
+            if (!IsInTrench) return;
+            if (OrderedPosition > PosY)
+                Move(0, 1);
+            else if (OrderedPosition < PosY)
+            {
+                Move(0, -1);
+            }
+        }
+
+        public void MoveToNextTrench(bool ShouldGunnersGo = false)
+        {
+            if(IsGunner && !ShouldGunnersGo)
+                return;
             if (IsShooting) return;
             CurrentAnimation = 1;
             CurrentLimit = RunFrames;
@@ -111,12 +129,14 @@ namespace MyGame.Model
         public void MoveToAllyTrench(int maxTrenchCord)
         {
             if (PosX != maxTrenchCord)
-                MoveToNextTrench();
+                MoveToNextTrench(true);
         }
 
         public void FindAndTryToKillEnemy()
         {
             if(IsShooting || IsAlive == 0)
+                return;
+            if(IsGunner && !IsInTrench)
                 return;
             var enemyUnits = (IsEnemy) ? GameModel.PlayerUnits : GameModel.EnemyUnits;
             var target = enemyUnits.FirstOrDefault(unit => GameModel.GetDistance(Location, unit.Location) <= FireRange && unit.IsAlive == 1);
@@ -125,6 +145,8 @@ namespace MyGame.Model
                 double currentPercentOfHit = PercentOfHit;
                 if (target.IsInTrench)
                     currentPercentOfHit /= 1.5;
+                if(target.IsGunner) 
+                    currentPercentOfHit -= 15;
                 PlayShootAnimation();
                 if (target.CheckHit(currentPercentOfHit))
                 {
@@ -180,6 +202,23 @@ namespace MyGame.Model
             IsAttacking = false;
             IsShooting = false;
             IsFallingBack = false;
+        }
+
+
+        public void InitGunnerButton()
+        {
+            GunnerButton = new Button
+            {
+                Location = new Point(PosX - ViewGraphics.SpriteRectangleSize - 8, PosY + ViewGraphics.SpriteRectangleSize + 16 ),
+                Size = new Size(20,20),
+                BackColor = Interface.EventsColor,
+                Image = ViewGraphics.XPosChangeImage
+            };
+            GunnerButton.Click += (sender, args) =>
+            {
+                ButtonController.GunnerButtonOnClick(sender,args,this);
+            };
+            Interface.GunnersButtons.Add(GunnerButton);
         }
     }
 }

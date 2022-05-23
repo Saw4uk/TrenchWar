@@ -22,9 +22,13 @@ namespace MyGame
         private Button LittleRiflemanSquadButton;
         private Button MiddleRiflemanSquadButton;
         private Button LargeRiflemanSquadButton;
+        private Button LittleGunnerSquadButton;
+        private Button LargeGunnerSquadButton;
         private Button AttackButton;
         private Button FallBackButton;
         private Button SuppliesButton;
+        private Button ArtilleryFireButton;
+        private Button ArtilleryThreeFireButton;
         private PictureBox MoneyPictureBox;
         private PictureBox DocumentPictureBox;
         private Label PlayerMoneyLabel;
@@ -48,12 +52,14 @@ namespace MyGame
             MakeInterface();
             MakeFormBorders();
             MakeUpdateFunction();
+            GameModel.DrawArtillery();
             EnemyAI.StartWar();
             MainPlayer = new MediaPlayer();
             MainPlayer.Open(new Uri(Interface.Tracks[Interface.CurrentTrack],UriKind.Relative));
             MainPlayer.Play();
             MainPlayer.MediaEnded += MainPlayerOnMediaEnded;
         }
+
 
         private void MainPlayerOnMediaEnded(object sender, EventArgs e)
         {
@@ -65,6 +71,8 @@ namespace MyGame
             {
                 Interface.CurrentTrack++;
             }
+            MainPlayer.Open(new Uri(Interface.Tracks[Interface.CurrentTrack], UriKind.Relative));
+            MainPlayer.Play();
         }
 
         public void MakeUpdateFunction()
@@ -86,6 +94,7 @@ namespace MyGame
         private void Update(object sender, EventArgs e)
         {
 
+
             foreach (var unit in GameModel.AllUnits)
             {
                 unit.FindAndTryToKillEnemy();
@@ -96,6 +105,8 @@ namespace MyGame
                 if (unit.IsAlive == 0)
                 {
                     unit.DieWithHonor();
+                    if(unit.IsGunner)
+                        Controls.Remove(unit.GunnerButton);
                     continue;
                 }
 
@@ -138,12 +149,25 @@ namespace MyGame
                     }
                 }
 
+                if(unit.PosY != unit.OrderedPosition && !unit.IsShooting)
+                    unit.MoveToOrderedPosition();
+
                 if (Map.Trenches.Any(x => x == unit.PosX && unit.IsReadyToClean == false) && !unit.IsShooting && !unit.IsInTrench)
                 {
                     unit.IsInTrench = true;
                     unit.CurrentAnimation = 0;
                     unit.CurrentFrame = 0;
                     unit.CurrentLimit = unit.IdleFrames;
+                }
+
+                if (unit.IsGunner && unit.IsAlive == 1)
+                {
+                    unit.GunnerButton.Location = new Point(unit.PosX - ViewGraphics.SpriteRectangleSize - 8, unit.PosY + ViewGraphics.SpriteRectangleSize - 16);
+                }
+
+                if (unit.IsGunner && !unit.IsButtonAddedToControls)
+                {
+                    Controls.Add(unit.GunnerButton);
                 }
             }
             CheckInterface();
@@ -153,6 +177,7 @@ namespace MyGame
                 $"Ваши потери : {GameModel.PlayerUnitsKilled} ч. \nПотери противника : {GameModel.EnemyKilled} ч.";
             Invalidate();
         }
+
 
         public void CheckInterface()
         {
@@ -182,7 +207,45 @@ namespace MyGame
             {
                 LargeRiflemanSquadButton.Enabled = true;
             }
+
+            if (GameModel.PlayerMoney < 50 || GameModel.PlayerSecretDocuments < 1 || ButtonController.PreparingToGetSupplies)
+            {
+                LittleGunnerSquadButton.Enabled = false;
+            }
+            else
+            {
+                LittleGunnerSquadButton.Enabled = true;
+            }
+
+            if (GameModel.PlayerMoney < 100 || GameModel.PlayerSecretDocuments < 1 || ButtonController.PreparingToGetSupplies)
+            {
+                LargeGunnerSquadButton.Enabled = false;
+            }
+            else
+            {
+                LargeGunnerSquadButton.Enabled = true;
+            }
+
+            if (GameModel.PlayerArtillery.IsShooting || GameModel.PlayerMoney < 50 || GameModel.PlayerSecretDocuments < 1)
+            {
+                ArtilleryFireButton.Enabled = false;
+            }
+            else
+            {
+                ArtilleryFireButton.Enabled = true;
+            }
+
+            if (GameModel.PlayerArtillery.IsShooting || GameModel.PlayerMoney < 100 || GameModel.PlayerSecretDocuments < 2)
+            {
+                ArtilleryThreeFireButton.Enabled = false;
+            }
+            else
+            {
+                ArtilleryThreeFireButton.Enabled = true;
+            }
+
         }
+
         public void MakeFormBorders()
         {
             BackgroundImage = Map.MapImage;
@@ -196,6 +259,8 @@ namespace MyGame
         {
             Interface.AddFonts();
             MouseClick += ButtonController.OnMouseClick;
+
+            Interface.ShootMediaPlayer.LoadCompleted += Interface.ShootMediaPlayerOnLoadCompleted;
 
             LowerInterfacePanel = new FlowLayoutPanel
             {
@@ -211,6 +276,14 @@ namespace MyGame
             LittleRiflemanSquadButton.Image = ViewGraphics.LittleRiflemanSquadImage;
             LittleRiflemanSquadButton.Click += ButtonController.LittleRiflemanButtonOnClick;
             LowerInterfacePanel.Controls.Add(LittleRiflemanSquadButton);
+
+            LittleGunnerSquadButton = new Button
+            {
+                Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
+            };
+            LittleGunnerSquadButton.Image = ViewGraphics.LittleGunnerSquadImage;
+            LittleGunnerSquadButton.Click += ButtonController.LittleGunnerSquadButtonOnClick;
+            LowerInterfacePanel.Controls.Add(LittleGunnerSquadButton);
 
             MiddleRiflemanSquadButton = new Button
             {
@@ -228,6 +301,14 @@ namespace MyGame
             LargeRiflemanSquadButton.Image = ViewGraphics.LargeRiflemanSquadImage;
             LargeRiflemanSquadButton.Click += ButtonController.LargeRiflemanButtonOnClick;
             LowerInterfacePanel.Controls.Add(LargeRiflemanSquadButton);
+
+            LargeGunnerSquadButton = new Button
+            {
+                Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
+            };
+            LargeGunnerSquadButton.Image = ViewGraphics.LargeGunnerSquad;
+            LargeGunnerSquadButton.Click += ButtonController.LargeGunnerSquadButtonOnClick;
+            LowerInterfacePanel.Controls.Add(LargeGunnerSquadButton);
 
             AttackButton = new Button
             {
@@ -254,6 +335,21 @@ namespace MyGame
             SuppliesButton.Click += ButtonController.SuppliesButtonOnClick;
             LowerInterfacePanel.Controls.Add(SuppliesButton);
 
+            ArtilleryFireButton = new Button
+            {
+                Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
+                Image = ViewGraphics.ArtilleryOneShoot
+            };
+            ArtilleryFireButton.Click += ButtonController.ArtilleryFireButtonOnClick;
+            LowerInterfacePanel.Controls.Add(ArtilleryFireButton);
+
+            ArtilleryThreeFireButton = new Button
+            {
+                Size = new Size(Interface.ButtonsWidth, Interface.ButtonsHeight),
+                Image = ViewGraphics.ArtilleryThreeShoots
+            };
+            ArtilleryThreeFireButton.Click += ButtonController.ArtilleryThreeFireButtonOnClick;
+            LowerInterfacePanel.Controls.Add(ArtilleryThreeFireButton);
 
             UpperInterfacePanel = new FlowLayoutPanel
             {
@@ -314,11 +410,12 @@ namespace MyGame
             UpperInterfacePanel.Controls.Add(InfoLabel);
         }
 
-
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
             var spawnSizeConst = ButtonController.SpawnSizeConst;
             var graphics = e.Graphics;
+            GameModel.PlayerArtillery.PlayAnimation(graphics);
+            GameModel.PlayerArtillery.Explosive.PlayAnimation(graphics);
             foreach (var unit in GameModel.AllUnits)
             {
                 unit.PlayAnimation(graphics);
@@ -346,6 +443,24 @@ namespace MyGame
                     ButtonController.UpperSuppliesPosition = mouseY + spawnSizeConst;
                     ButtonController.LowerSuppliesPosition = mouseY - spawnSizeConst;
                 }
+            }
+
+            if (ButtonController.GunnerWaitOrders)
+            {
+                if (mouseY >= Interface.ButtonsHeight / 2 && mouseY <= Map.MapHeight + Interface.ButtonsHeight)
+                {
+                    graphics.DrawLine(new Pen(Color.Gold, 3f),
+                        new Point(0, mouseY),
+                        new Point(mouseX, mouseY));
+                    ButtonController.GunnerNewPosition = mouseY;
+                }
+            }
+
+            if (ButtonController.IsWaitingForArtilleryFire)
+            {
+                graphics.DrawLine(new Pen(Color.Red, 3f), new Point(mouseX - 50, mouseY), new Point(mouseX + 50, mouseY));
+                graphics.DrawLine(new Pen(Color.Red, 3f), new Point(mouseX, mouseY + 50), new Point(mouseX, mouseY - 50));
+                GameModel.PlayerArtillery.FireTarget = new Point(mouseX, mouseY);
             }
         }
 

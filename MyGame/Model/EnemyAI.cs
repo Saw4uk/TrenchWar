@@ -29,7 +29,7 @@ namespace MyGame.Model
             EnemyOrdersLogicTimer.Tick += GetOrders;
             EnemyOrdersLogicTimer.Start();
             CurrentStrategy = Strategy.Rush;
-            GameModel.SpawnUnits(5,Interface.ButtonsHeight + ViewGraphics.SpriteRectangleSize, Map.MapHeight - ViewGraphics.SpriteRectangleSize);
+            GameModel.SpawnRiflemans(5,Interface.ButtonsHeight + ViewGraphics.SpriteRectangleSize, Map.MapHeight - ViewGraphics.SpriteRectangleSize);
             SpawnEnemies(10);
         }
 
@@ -48,7 +48,7 @@ namespace MyGame.Model
                     CurrentStrategy = Strategy.WaitOrders;
                     break;
                 case Strategy.Defend:
-                    SpawnEnemies(5);
+                    SpawnEnemies(8);
                     AllSuppliesToMainTrench();
                     CurrentStrategy = Strategy.WaitOrders;
                     break;
@@ -140,6 +140,7 @@ namespace MyGame.Model
                 SpriteList = ViewGraphics.EnemyUnitSprite,
 
             };
+            entityToAdd.OrderedPosition = entityToAdd.PosY;
             GameModel.AllUnits.Add(entityToAdd);
             GameModel.EnemyUnits.Add(entityToAdd);
             entityToAdd.MoveToNextTrench();

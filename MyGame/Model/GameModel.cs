@@ -14,8 +14,9 @@ namespace MyGame.Model
         public static List<Entity> PlayerUnits = new List<Entity>();
         public static List<Entity> EnemyUnits = new List<Entity>();
         public static Random HitRandom = new Random();
+        public static Artillery PlayerArtillery;
         public static int PlayerMoney = 100;
-        public static int PlayerSecretDocuments = 1;
+        public static int PlayerSecretDocuments = 5;
         public static int MaxPlayerTrenches = 1;
         public static int EnemyKilled;
         public static int PlayerUnitsKilled;
@@ -26,7 +27,7 @@ namespace MyGame.Model
 
         }
 
-        public static void SpawnUnits(int numberOfUnits, int lowerPos, int upperPos)
+        public static void SpawnRiflemans(int numberOfUnits, int lowerPos, int upperPos)
         {
             for (var x = 0; x < numberOfUnits; x++)
             {
@@ -43,11 +44,54 @@ namespace MyGame.Model
                     SpriteList = ViewGraphics.FriendlyUnitSprite,
 
                 };
+                entityToAdd.OrderedPosition = entityToAdd.PosY;
                 AllUnits.Add(entityToAdd);
                 PlayerUnits.Add(entityToAdd);
                 entityToAdd.MoveToNextTrench();
             }
         }
+
+        public static void SpawnGunners(int numberOfUnits, int lowerPos, int upperPos)
+        {
+            for (var x = 0; x < numberOfUnits; x++)
+            {
+                var entityToAdd = new Entity
+                {
+                    PosX = HitRandom.Next(0, 35),
+                    PosY = HitRandom.Next(lowerPos, upperPos),
+                    //(ViewGraphics.SpriteRectangleSize + Interface.ButtonsHeight, Map.MapHeight - ViewGraphics.SpriteRectangleSize - Interface.ButtonsHeight)
+                    IdleFrames = 4,
+                    RunFrames = 2,
+                    DeadFrames = 8,
+                    CurrentLimit = 4,
+                    AttackFrames = 4,
+                    SpriteList = ViewGraphics.AllyGunnerSpriteList,
+                    IsGunner = true,
+                    PercentOfHit = 30,
+                    FireRange = 163
+
+                };
+                entityToAdd.OrderedPosition = entityToAdd.PosY;
+                entityToAdd.InitGunnerButton();
+                AllUnits.Add(entityToAdd);
+                PlayerUnits.Add(entityToAdd);
+                entityToAdd.MoveToNextTrench(true);
+            }
+        }
+        public static void DrawArtillery()
+        {
+            PlayerArtillery = new Artillery
+            {
+                PosX = 0,
+                PosY =400,
+                IdleFrames = 1,
+                AttackFrames = 53,
+                CurrentLimit = 1,
+                SpriteList = ViewGraphics.ArtillerySpriteSheet,
+                Explosive = new Explosive()
+            };
+        }
+
         public static void CleanCorps(object sender, EventArgs e)
         {
             var newAllUnits = AllUnits.Where(x => x.IsReadyToClean == false).ToList();

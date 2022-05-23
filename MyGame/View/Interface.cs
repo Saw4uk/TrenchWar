@@ -31,6 +31,7 @@ namespace MyGame.View
         public static Color ButtonsColor = Color.FromArgb(114, 125, 113);
         public static Color InterfaceColor = Color.FromArgb(171, 196, 171);
         public static Color EventsColor = Color.FromArgb(220, 201, 182);
+        public static List<Button> GunnersButtons = new List<Button>();
         public static int CurrentTrack = 0;
 
         public static string Shoot =
@@ -49,6 +50,14 @@ namespace MyGame.View
             Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
                 "Sprites\\MoneySound.wav");
 
+        public static string Artillery =
+            Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+                "Sprites\\ArtilleryShoot.wav");
+
+        public static string Explosive =
+            Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+                "Sprites\\Explosive.wav");
+
         public static string[] Tracks = {
             Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\Track1.mp3"),
             Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\Track2.mp3")
@@ -64,8 +73,36 @@ namespace MyGame.View
 
         public static void PlayShootSound()
         {
-            ShootMediaPlayer.SoundLocation = Shoot;
-            ShootMediaPlayer.Play();
+            LoadAsyncSound();
+        }
+
+        public static void LoadAsyncSound()
+        {
+            try
+            {
+                // Replace this file name with a valid file name.
+                ShootMediaPlayer.SoundLocation = Shoot;
+                ShootMediaPlayer.LoadAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error loading sound");
+            }
+        }
+
+        public static void ShootMediaPlayerOnLoadCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            if (ShootMediaPlayer.IsLoadCompleted)
+            {
+                try
+                {
+                    ShootMediaPlayer.Play();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error playing sound");
+                }
+            }
         }
 
         public static void PlayMorzeSound()
@@ -83,6 +120,18 @@ namespace MyGame.View
         public static void PlayMoneySound()
         {
             MoneyMediaPlayer.SoundLocation = Money;
+            MoneyMediaPlayer.Play();
+        }
+
+        public static void PlayArtilleryShootSound()
+        {
+            MoneyMediaPlayer.SoundLocation = Artillery;
+            MoneyMediaPlayer.Play();
+        }
+
+        public static void PlayExplosiveSound()
+        {
+            MoneyMediaPlayer.SoundLocation = Explosive;
             MoneyMediaPlayer.Play();
         }
     }

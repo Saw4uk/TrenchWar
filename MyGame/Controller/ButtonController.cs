@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,8 +13,13 @@ namespace MyGame.Controller
     public static class ButtonController
     {
         private static Random rnd = new Random();
+        private static Entity CurrentGunner;
+        public static int GunnerNewPosition;
         public static bool PreparingToGetSupplies;
-        public static int NumOfUnitsToSupply;
+        public static bool GunnerWaitOrders;
+        public static bool IsWaitingForArtilleryFire;
+        public static int NumOfRiflemansToSupply;
+        public static int NumOfGunnersToSupply;
         public static int LowerSuppliesPosition;
         public static int UpperSuppliesPosition;
         public static int SpawnSizeConst;
@@ -21,31 +27,49 @@ namespace MyGame.Controller
         {
             GameModel.PlayerMoney -= 25;
             PreparingToGetSupplies = true;
-            NumOfUnitsToSupply = 3;
+            NumOfRiflemansToSupply = 3;
             SpawnSizeConst = 60;
+            NumOfGunnersToSupply = 0;
         }
 
         public static void MiddleRiflemanButtonOnClick(object sender, EventArgs e)
         {
             GameModel.PlayerMoney -= 35;
             PreparingToGetSupplies = true;
-            NumOfUnitsToSupply = 5;
+            NumOfRiflemansToSupply = 5;
             SpawnSizeConst = 70;
+            NumOfGunnersToSupply = 0;
         }
 
         public static void LargeRiflemanButtonOnClick(object sender, EventArgs e)
         {
             GameModel.PlayerMoney -= 65;
             PreparingToGetSupplies = true;
-            NumOfUnitsToSupply = 10;
+            NumOfRiflemansToSupply = 10;
             SpawnSizeConst = 100;
+            NumOfGunnersToSupply = 0;
         }
         public static void OnMouseClick(object sender, MouseEventArgs e)
         {
             if(PreparingToGetSupplies)
-                GameModel.SpawnUnits(NumOfUnitsToSupply, LowerSuppliesPosition, UpperSuppliesPosition);
-            PreparingToGetSupplies = false;
-            Interface.PlayStepsSound();
+            {
+                GameModel.SpawnRiflemans(NumOfRiflemansToSupply, LowerSuppliesPosition, UpperSuppliesPosition);
+                GameModel.SpawnGunners(NumOfGunnersToSupply, LowerSuppliesPosition, UpperSuppliesPosition);
+                PreparingToGetSupplies = false;
+                Interface.PlayStepsSound();
+            }
+
+            if (GunnerWaitOrders)
+            {
+                GunnerWaitOrders = false;
+                CurrentGunner.OrderedPosition = GunnerNewPosition;
+            }
+
+            if (IsWaitingForArtilleryFire)
+            {
+                IsWaitingForArtilleryFire = false;
+                GameModel.PlayerArtillery.PlayShootAnimation();
+            }
         }
 
         public static void AttackButton_Click(object sender, EventArgs e)
@@ -74,6 +98,51 @@ namespace MyGame.Controller
                 unit.MoveToAllyTrench(maxTrenchCord);
             }
             Interface.PlayMorzeSound();
+        }
+
+        public static void LittleGunnerSquadButtonOnClick(object sender, EventArgs e)
+        {
+            GameModel.PlayerMoney -= 50;
+            GameModel.PlayerSecretDocuments -= 1;
+            PreparingToGetSupplies = true;
+            NumOfRiflemansToSupply = 2;
+            NumOfGunnersToSupply = 1;
+            SpawnSizeConst = 40;
+        }
+
+        public static void LargeGunnerSquadButtonOnClick(object sender, EventArgs e)
+        {
+            GameModel.PlayerMoney -= 100;
+            GameModel.PlayerSecretDocuments -= 1;
+            PreparingToGetSupplies = true;
+            NumOfRiflemansToSupply = 9;
+            NumOfGunnersToSupply = 1;
+            SpawnSizeConst = 100;
+        }
+
+        public static void GunnerButtonOnClick(object sender, EventArgs e,Entity gunner)
+        {
+            GunnerWaitOrders = true;
+            CurrentGunner = gunner;
+        }
+
+        public static void ArtilleryFireButtonOnClick(object sender, EventArgs e)
+        {
+            IsWaitingForArtilleryFire = true;
+            GameModel.PlayerArtillery.OrderedShoots = 1;
+            GameModel.PlayerArtillery.FireAccuracy = 30;
+            GameModel.PlayerMoney -= 50;
+            GameModel.PlayerSecretDocuments -= 1;
+
+        }
+
+        public static void ArtilleryThreeFireButtonOnClick(object sender, EventArgs e)
+        {
+            IsWaitingForArtilleryFire = true;
+            GameModel.PlayerArtillery.OrderedShoots = 3;
+            GameModel.PlayerArtillery.FireAccuracy = 100;
+            GameModel.PlayerMoney -= 100;
+            GameModel.PlayerSecretDocuments -= 2;
         }
     }
 }
