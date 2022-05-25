@@ -15,8 +15,8 @@ namespace MyGame.Model
         public static List<Entity> EnemyUnits = new List<Entity>();
         public static Random HitRandom = new Random();
         public static Artillery PlayerArtillery;
-        public static int PlayerMoney = 100;
-        public static int PlayerSecretDocuments = 5;
+        public static int PlayerMoney = 10000;
+        public static int PlayerSecretDocuments = 100;
         public static int MaxPlayerTrenches = 1;
         public static int EnemyKilled;
         public static int PlayerUnitsKilled;

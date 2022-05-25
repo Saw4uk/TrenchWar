@@ -34,5 +34,9 @@ namespace MyGame.View
         public static Image ArtilleryOneShoot = new Bitmap(Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\ArtilleryShoot.png"));
         public static Image ArtilleryThreeShoots = new Bitmap(Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\ArtilleryShoots.png"));
         public static Image LargeGunnerSquad = new Bitmap(Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\LargeGunnerSqad.png"));
+        public static Image SecondFormImage = new Bitmap(Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\SecondForm.png"));
+        public static Image PlayButtonImage = new Bitmap(Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\PlayButton.png"));
+        public static Image StudingButtonImage = new Bitmap(Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\StudingButton.png"));
+        public static Image SettingsButtonImage = new Bitmap(Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\SettingsButton.png"));
     }
 }

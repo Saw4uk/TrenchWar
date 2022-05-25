@@ -74,6 +74,7 @@ namespace MyGame.Model
                 CurrentFrame = 0;
             }
         }
+
         public void Move(int dx, int dy)
         {
             PosX += dx;

@@ -39,7 +39,6 @@ namespace MyGame
         public Timer UpdateTimer;
         public Timer CleanCorpsTimer;
         public Timer AddMoneyTimer;
-        public MediaPlayer MainPlayer;
 
         public Form1()
         {
@@ -54,26 +53,9 @@ namespace MyGame
             MakeUpdateFunction();
             GameModel.DrawArtillery();
             EnemyAI.StartWar();
-            MainPlayer = new MediaPlayer();
-            MainPlayer.Open(new Uri(Interface.Tracks[Interface.CurrentTrack],UriKind.Relative));
-            MainPlayer.Play();
-            MainPlayer.MediaEnded += MainPlayerOnMediaEnded;
+            Interface.CurrentTrack = 0;
         }
 
-
-        private void MainPlayerOnMediaEnded(object sender, EventArgs e)
-        {
-            if (Interface.CurrentTrack == Interface.Tracks.Length - 1)
-            {
-                Interface.CurrentTrack = 0;
-            }
-            else
-            {
-                Interface.CurrentTrack++;
-            }
-            MainPlayer.Open(new Uri(Interface.Tracks[Interface.CurrentTrack], UriKind.Relative));
-            MainPlayer.Play();
-        }
 
         public void MakeUpdateFunction()
         {
@@ -177,7 +159,6 @@ namespace MyGame
                 $"Ваши потери : {GameModel.PlayerUnitsKilled} ч. \nПотери противника : {GameModel.EnemyKilled} ч.";
             Invalidate();
         }
-
 
         public void CheckInterface()
         {
@@ -414,12 +395,14 @@ namespace MyGame
         {
             var spawnSizeConst = ButtonController.SpawnSizeConst;
             var graphics = e.Graphics;
+
             GameModel.PlayerArtillery.PlayAnimation(graphics);
             GameModel.PlayerArtillery.Explosive.PlayAnimation(graphics);
             foreach (var unit in GameModel.AllUnits)
             {
                 unit.PlayAnimation(graphics);
             }
+
             var mouseX = MousePosition.X - Location.X;
             var mouseY = MousePosition.Y - Location.Y - 7;
             if (ButtonController.PreparingToGetSupplies)

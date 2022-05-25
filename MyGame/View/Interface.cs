@@ -28,6 +28,7 @@ namespace MyGame.View
         public static FontFamily BoldFont;
         public static Font MainFont;
         public static Font BigFont;
+        public static MediaPlayer MainPlayer;
         public static Color ButtonsColor = Color.FromArgb(114, 125, 113);
         public static Color InterfaceColor = Color.FromArgb(171, 196, 171);
         public static Color EventsColor = Color.FromArgb(220, 201, 182);
@@ -58,11 +59,41 @@ namespace MyGame.View
             Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
                 "Sprites\\Explosive.wav");
 
+        public static string Menu =
+            Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+                "Sprites\\Menu.wav");
+
         public static string[] Tracks = {
-            Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\Track1.mp3"),
-            Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\Track2.mp3")
+            Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\Track6.mp3"),
+            Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\Track7.mp3"),
+            Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\Track3.mp3"),
+            Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\Track4.mp3"),
+            Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\Track5.mp3")
         };
-        
+
+        public static void PlayMusic()
+        {
+            MainPlayer = new MediaPlayer();
+            MainPlayer.Open(new Uri(Tracks[CurrentTrack], UriKind.Relative));
+            MainPlayer.Play();
+            MainPlayer.MediaEnded += MainPlayerOnMediaEnded;
+        }
+
+        private static void MainPlayerOnMediaEnded(object sender, EventArgs e)
+        {
+            if (CurrentTrack == Tracks.Length - 1)
+            {
+                CurrentTrack = 0;
+                MainPlayer.Open(new Uri(Tracks[CurrentTrack], UriKind.Relative));
+                MainPlayer.Play();
+            }
+            else
+            {
+                CurrentTrack++;
+                MainPlayer.Open(new Uri(Tracks[CurrentTrack], UriKind.Relative));
+                MainPlayer.Play();
+            }
+        }
         public static void AddFonts()
         {
             fontCollection.AddFontFile(Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Sprites\\Pixel Times.ttf"));
@@ -104,6 +135,7 @@ namespace MyGame.View
                 }
             }
         }
+
 
         public static void PlayMorzeSound()
         {
