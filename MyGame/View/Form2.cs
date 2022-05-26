@@ -7,6 +7,7 @@ using System.Media;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Media;
+using AxWMPLib;
 
 namespace MyGame.View
 {
@@ -15,7 +16,10 @@ namespace MyGame.View
         private Button PlayButton;
         private Button SettingsButton;
         private Button StudingButton;
-        public SoundPlayer MainPlayer;
+        private Button PlayVideoButton;
+        private Button TrainingButton;
+        private Button BackButton;
+        public SoundPlayer ButtonClickPlayer;
         public Form2()
         {
             InitializeComponent();
@@ -25,13 +29,13 @@ namespace MyGame.View
         public void Init()
         {
             MakeFormBorders();
-            CreateInterface();
+            SetFirstTypeOfInterface();
             Interface.PlayMusic();
 
         }
 
 
-        public void CreateInterface()
+        public void SetFirstTypeOfInterface()
         {
             PlayButton = new Button
             {
@@ -66,15 +70,65 @@ namespace MyGame.View
             throw new NotImplementedException();
         }
 
-        private void StudingButtonOnClick(object sender, EventArgs e)
+        private void SetSecondTypeOfInterface()
+        {
+            PlayButton.Hide();
+            StudingButton.Hide();
+            SettingsButton.Hide();
+            PlayVideoButton = new Button
+            {
+                Location = new Point(447, 285),
+                Size = ViewGraphics.MovieButtonImage.Size,
+                Image = ViewGraphics.MovieButtonImage
+            };
+            PlayVideoButton.Click += StudingButtonOnClick;
+            Controls.Add(PlayVideoButton);
+
+            TrainingButton = new Button
+            {
+                Location = new Point(447, PlayVideoButton.Location.Y + 160),
+                Size = ViewGraphics.TrainingButtonImage.Size,
+                Image = ViewGraphics.TrainingButtonImage
+            };
+            TrainingButton.Click += TrainingButtonOnClick;
+            Controls.Add(TrainingButton);
+
+            BackButton = new Button
+            {
+                Location = new Point(447, TrainingButton.Location.Y + 160),
+                Size = ViewGraphics.BackButtonImage.Size,
+                Image = ViewGraphics.BackButtonImage
+            };
+            BackButton.Click += BackButtonOnClick;
+            Controls.Add(BackButton);
+        }
+
+        public void BackButtonOnClick(object sender, EventArgs e)
+        { 
+            PlayVideoButton.Hide(); 
+            TrainingButton.Hide(); 
+            BackButton.Hide();
+            SetFirstTypeOfInterface();
+        }
+
+        public void TrainingButtonOnClick(object sender, EventArgs e)
         {
             throw new NotImplementedException();
+        }
+
+        private void StudingButtonOnClick(object sender, EventArgs e)
+        {
+            SetSecondTypeOfInterface();
         }
 
         private void PlayButtonOnClick(object sender, EventArgs e)
         {
             ActiveForm?.Hide();
-            var game = new Form1();
+            var game = new Form1
+            {
+                Location = new Point(Location.X, Location.Y)
+            };
+            game.TopMost = true;
             game.ShowDialog();
             Close();
         }

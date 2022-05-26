@@ -8,3 +8,8 @@ C:\Users\Saw4uk\source\repos\MyGame\MyGame\obj\Debug\MyGame.csproj.CoreCompileIn
 C:\Users\Saw4uk\source\repos\MyGame\MyGame\obj\Debug\MyGame.exe
 C:\Users\Saw4uk\source\repos\MyGame\MyGame\obj\Debug\MyGame.pdb
 C:\Users\Saw4uk\source\repos\MyGame\MyGame\obj\Debug\MyGame.Form1.resources
+C:\Users\Saw4uk\source\repos\MyGame\MyGame\bin\Debug\Interop.WMPLib.dll
+C:\Users\Saw4uk\source\repos\MyGame\MyGame\bin\Debug\AxInterop.WMPLib.dll
+C:\Users\Saw4uk\source\repos\MyGame\MyGame\obj\Debug\Interop.WMPLib.dll
+C:\Users\Saw4uk\source\repos\MyGame\MyGame\obj\Debug\AxInterop.WMPLib.dll
+C:\Users\Saw4uk\source\repos\MyGame\MyGame\obj\Debug\MyGame.csproj.ResolveComReference.cache

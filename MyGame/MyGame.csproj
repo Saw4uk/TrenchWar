@@ -105,20 +105,22 @@
     <Content Include="Sprites\ArtilleryShoot.wav" />
     <Content Include="Sprites\ArtilleryShoots.png" />
     <Content Include="Sprites\ArtillerySpriteSheett.png" />
+    <Content Include="Sprites\BackButton.png" />
     <Content Include="Sprites\Explosive.wav" />
     <Content Include="Sprites\ExplosiveSheet.png" />
+    <Content Include="Sprites\FullVersion.wmv" />
     <Content Include="Sprites\LargeGunnerSqad.png" />
     <Content Include="Sprites\LittleGunnerSqad .png" />
     <Content Include="Sprites\LittleGunnerSqad.png" />
     <Content Include="Sprites\Menu.wav" />
     <Content Include="Sprites\MoneySound.wav" />
     <Content Include="Sprites\Morze.wav" />
+    <Content Include="Sprites\Movie.png" />
     <Content Include="Sprites\PlayButton.png" />
     <Content Include="Sprites\SecondForm.png" />
     <Content Include="Sprites\SettingsButton.png" />
     <Content Include="Sprites\Steps.wav" />
     <Content Include="Sprites\StudingButton.png" />
-    <Content Include="Sprites\Track2.mp3" />
     <Content Include="Sprites\Attack.png" />
     <Content Include="Sprites\Documents.png" />
     <Content Include="Sprites\EnemySoldierSpriteSheet.png" />
@@ -136,8 +138,27 @@
     <Content Include="Sprites\Track5.mp3" />
     <Content Include="Sprites\Track6.mp3" />
     <Content Include="Sprites\Track7.mp3" />
+    <Content Include="Sprites\TrainingButton.png" />
     <Content Include="Sprites\XPosChange.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <COMReference Include="AxWMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
