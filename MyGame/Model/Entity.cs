@@ -13,10 +13,15 @@ namespace MyGame.Model
 {
     public class Entity
     {
+        public GameModel GameModel;
+        public Entity(GameModel gameModel)
+        {
+            GameModel = gameModel;
+        }
+
         public int PosX;
         public int PosY;
         public Point Location => new Point(PosX, PosY);
-        public Button GunnerButton;
         public Image SpriteList;
         public int IdleFrames;
         public int AttackFrames;
@@ -156,12 +161,12 @@ namespace MyGame.Model
                     if (target.IsEnemy)
                     {
                         GameModel.EnemyKilled++;
-                        GameModel.PlayerMoney += 5;
+                        GameModel.PlayerMoney += 3;
                     }
                     else
                     {
                         GameModel.PlayerUnitsKilled++;
-                        GameModel.PlayerMoney += 2;
+                        GameModel.PlayerMoney += 1;
                     }
                 }
             }
@@ -203,23 +208,6 @@ namespace MyGame.Model
             IsAttacking = false;
             IsShooting = false;
             IsFallingBack = false;
-        }
-
-
-        public void InitGunnerButton()
-        {
-            GunnerButton = new Button
-            {
-                Location = new Point(PosX - ViewGraphics.SpriteRectangleSize - 8, PosY + ViewGraphics.SpriteRectangleSize + 16 ),
-                Size = new Size(20,20),
-                BackColor = Interface.EventsColor,
-                Image = ViewGraphics.XPosChangeImage
-            };
-            GunnerButton.Click += (sender, args) =>
-            {
-                ButtonController.GunnerButtonOnClick(sender,args,this);
-            };
-            Interface.GunnersButtons.Add(GunnerButton);
         }
     }
 }

@@ -4,28 +4,38 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MyGame.Controller;
 using MyGame.View;
 
 namespace MyGame.Model
 {
-    public enum Strategy
+    public class EnemyAI
     {
-        PrepareToAttack,
-        Attack,
-        Defend,
-        Rush,
-        WaitOrders
-    }
-    public static class EnemyAI
-    {
-        private static Timer EnemyOrdersLogicTimer;
-        private static Random rnd = new Random();
-        public static Strategy CurrentStrategy;
-        public static void StartWar()
+        public enum Strategy
+        {
+            PrepareToAttack,
+            Attack,
+            Defend,
+            Rush,
+            WaitOrders
+        }
+
+        public GameModel GameModel;
+        public ButtonController ButtonController;
+        private Timer EnemyOrdersLogicTimer;
+        private Random rnd = new Random();
+        public Strategy CurrentStrategy;
+
+        public EnemyAI(GameModel gameModel,ButtonController buttonController)
+        {
+            GameModel = gameModel;
+            ButtonController = buttonController;
+        }
+        public void StartWar()
         {
 
             EnemyOrdersLogicTimer = new Timer();
-            EnemyOrdersLogicTimer.Interval = 5000;
+            EnemyOrdersLogicTimer.Interval = 10000;
             EnemyOrdersLogicTimer.Tick += GetOrders;
             EnemyOrdersLogicTimer.Start();
             CurrentStrategy = Strategy.Rush;
@@ -33,7 +43,7 @@ namespace MyGame.Model
             SpawnEnemies(10);
         }
 
-        private static void GetOrders(object sender, EventArgs e)
+        private void GetOrders(object sender, EventArgs e)
         {
             switch (CurrentStrategy)
             {
@@ -57,10 +67,10 @@ namespace MyGame.Model
                     CurrentStrategy = Strategy.Attack;
                     break;
             }
-
+            SpawnEnemies(2);
         }
 
-        private static Strategy GetStrategy()
+        private Strategy GetStrategy()
         {
             if (GameModel.PlayerUnits.Count > GameModel.EnemyUnits.Count)
             {
@@ -84,7 +94,7 @@ namespace MyGame.Model
             }
         }
 
-        private static void PrepareToAttack()
+        private void PrepareToAttack()
         {
             if (GameModel.PlayerUnits.Count - GameModel.EnemyUnits.Count >= GameModel.EnemyUnits.Count / 2)
             {
@@ -100,7 +110,7 @@ namespace MyGame.Model
             
         }
 
-        private static void Attack()
+        private void Attack()
         {
             foreach (var unit in GameModel.EnemyUnits)
             {
@@ -109,7 +119,7 @@ namespace MyGame.Model
             SpawnEnemies(2);
         }
 
-        private static void AllSuppliesToMainTrench()
+        private void AllSuppliesToMainTrench()
         {
             var maxTrenchCord = GameModel.EnemyUnits.Where(x => Map.Trenches.Any(i => x.PosX <= i)).Min(x => x.PosX);
             foreach (var unit in GameModel.EnemyUnits)
@@ -117,7 +127,7 @@ namespace MyGame.Model
                 unit.MoveToAllyTrench(maxTrenchCord);
             }
         }
-        private static void SpawnEnemies(int numberOfEnemies)
+        private void SpawnEnemies(int numberOfEnemies)
         {
             for (var i = 0; i < numberOfEnemies; i++)
             {
@@ -125,9 +135,9 @@ namespace MyGame.Model
             }
         }
 
-        private static void SpawnEnemyUnit()
+        private void SpawnEnemyUnit()
         {
-            var entityToAdd = new Entity
+            var entityToAdd = new Entity(GameModel)
             {
                 PosX = Map.MapWidth - ViewGraphics.SpriteRectangleSize,
                 PosY = rnd.Next(ViewGraphics.SpriteRectangleSize + Interface.ButtonsHeight, Map.MapHeight - ViewGraphics.SpriteRectangleSize - Interface.ButtonsHeight),
