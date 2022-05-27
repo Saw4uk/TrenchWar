@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{31753784-FFA4-4671-A55C-3372563A9F8F}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>MyGame</RootNamespace>
+    <AssemblyName>MyGame</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Model\Artillery.cs" />
+    <Compile Include="Controller\ButtonController.cs" />
+    <Compile Include="Model\EnemyAI.cs" />
+    <Compile Include="Model\Entity.cs" />
+    <Compile Include="Model\Explosive.cs" />
+    <Compile Include="Model\GameModel.cs" />
+    <Compile Include="View\GameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\GameForm.Designer.cs">
+      <DependentUpon>GameForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="View\MenuForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\MenuForm.Designer.cs">
+      <DependentUpon>MenuForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\ViewGraphics.cs" />
+    <Compile Include="View\Interface.cs" />
+    <Compile Include="View\Map.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="View\GameForm.resx">
+      <DependentUpon>GameForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\MenuForm.resx">
+      <DependentUpon>MenuForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="Sprites\Pixel Times Bold.ttf" />
+    <None Include="Sprites\Pixel Times.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Sprites\AllyGunnerSpriteList.png" />
+    <Content Include="Sprites\AllySoldierSpriteSheet.png" />
+    <Content Include="Sprites\ArtilleryShoot.png" />
+    <Content Include="Sprites\ArtilleryShoot.wav" />
+    <Content Include="Sprites\ArtilleryShoots.png" />
+    <Content Include="Sprites\ArtillerySpriteSheett.png" />
+    <Content Include="Sprites\BackButton.png" />
+    <Content Include="Sprites\Click.wav" />
+    <Content Include="Sprites\Explosive.wav" />
+    <Content Include="Sprites\ExplosiveSheet.png" />
+    <Content Include="Sprites\FullVersion.wmv" />
+    <Content Include="Sprites\LargeGunnerSqad.png" />
+    <Content Include="Sprites\LittleBackButton.png" />
+    <Content Include="Sprites\LittleGunnerSqad .png" />
+    <Content Include="Sprites\LittleGunnerSqad.png" />
+    <Content Include="Sprites\Menu.wav" />
+    <Content Include="Sprites\MoneySound.wav" />
+    <Content Include="Sprites\Morze.wav" />
+    <Content Include="Sprites\Movie.png" />
+    <Content Include="Sprites\PlayButton.png" />
+    <Content Include="Sprites\SecondForm.png" />
+    <Content Include="Sprites\SettingsButton.png" />
+    <Content Include="Sprites\Steps.wav" />
+    <Content Include="Sprites\StudingButton.png" />
+    <Content Include="Sprites\Attack.png" />
+    <Content Include="Sprites\Documents.png" />
+    <Content Include="Sprites\EnemySoldierSpriteSheet.png" />
+    <Content Include="Sprites\FallBack.png" />
+    <Content Include="Sprites\Track1.mp3" />
+    <Content Include="Sprites\LargeRiflemanSqad.png" />
+    <Content Include="Sprites\LittleRiflemanSqad.png" />
+    <Content Include="Sprites\Map.png" />
+    <Content Include="Sprites\MiddleRiflemanSqad.png" />
+    <Content Include="Sprites\Money.png" />
+    <Content Include="Sprites\RifleShoot.wav" />
+    <Content Include="Sprites\ToMainTrench.png" />
+    <Content Include="Sprites\Track3.mp3" />
+    <Content Include="Sprites\Track4.mp3" />
+    <Content Include="Sprites\Track5.mp3" />
+    <Content Include="Sprites\Track6.mp3" />
+    <Content Include="Sprites\Track7.mp3" />
+    <Content Include="Sprites\TrainingButton.png" />
+    <Content Include="Sprites\XPosChange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AxWMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

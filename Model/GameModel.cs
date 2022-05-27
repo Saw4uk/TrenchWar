@@ -8,40 +8,40 @@ using MyGame.View;
 
 namespace MyGame.Model
 {
-    public class GameModel
+    public static class GameModel
     {
-        public Entity CurrentGunner;
-        public int GunnerNewPosition;
-        public bool PreparingToGetSupplies;
-        public bool GunnerWaitOrders;
-        public bool IsWaitingForArtilleryFire;
-        public int NumOfRiflemansToSupply;
-        public int NumOfGunnersToSupply;
-        public int LowerSuppliesPosition;
-        public int UpperSuppliesPosition;
-        public int SpawnSizeConst;
-        public List<Entity> AllUnits = new List<Entity>();
-        public List<Entity> PlayerUnits = new List<Entity>();
-        public List<Entity> EnemyUnits = new List<Entity>();
-        public Random HitRandom = new Random();
-        public Artillery PlayerArtillery;
-        public int PlayerMoney = 1000;
-        public int PlayerSecretDocuments = 10;
-        public int MaxPlayerTrenches = 1;
-        public int EnemyKilled;
-        public int PlayerUnitsKilled;
+        public static Entity CurrentGunner;
+        public static int GunnerNewPosition;
+        public static bool PreparingToGetSupplies;
+        public static bool GunnerWaitOrders;
+        public static bool IsWaitingForArtilleryFire;
+        public static int NumOfRiflemansToSupply;
+        public static int NumOfGunnersToSupply;
+        public static int LowerSuppliesPosition;
+        public static int UpperSuppliesPosition;
+        public static int SpawnSizeConst;
+        public static List<Entity> AllUnits = new List<Entity>();
+        public static List<Entity> PlayerUnits = new List<Entity>();
+        public static List<Entity> EnemyUnits = new List<Entity>();
+        public static Random HitRandom = new Random();
+        public static Artillery PlayerArtillery;
+        public static int PlayerMoney = 1000;
+        public static int PlayerSecretDocuments = 10;
+        public static int MaxPlayerTrenches = 1;
+        public static int EnemyKilled;
+        public static int PlayerUnitsKilled;
 
-        public double GetDistance(Point point1, Point point2)
+        public static double GetDistance(Point point1, Point point2)
         {
             return Math.Sqrt(Math.Pow(point2.X - point1.X, 2) + Math.Pow(point2.Y - point1.Y, 2));
 
         }
 
-        public void SpawnRiflemans(int numberOfUnits, int lowerPos, int upperPos)
+        public static void SpawnRiflemans(int numberOfUnits, int lowerPos, int upperPos)
         {
             for (var x = 0; x < numberOfUnits; x++)
             {
-                var entityToAdd = new Entity(this)
+                var entityToAdd = new Entity
                 {
                     PosX = HitRandom.Next(0,35),
                     PosY = HitRandom.Next(lowerPos, upperPos),
@@ -61,11 +61,11 @@ namespace MyGame.Model
             }
         }
 
-        public void SpawnGunners(int numberOfUnits, int lowerPos, int upperPos)
+        public static void SpawnGunners(int numberOfUnits, int lowerPos, int upperPos)
         {
             for (var x = 0; x < numberOfUnits; x++)
             {
-                var entityToAdd = new Entity(this)
+                var entityToAdd = new Entity
                 {
                     PosX = HitRandom.Next(0, 35),
                     PosY = HitRandom.Next(lowerPos, upperPos),
@@ -82,14 +82,15 @@ namespace MyGame.Model
 
                 };
                 entityToAdd.OrderedPosition = entityToAdd.PosY;
+                entityToAdd.InitGunnerButton();
                 AllUnits.Add(entityToAdd);
                 PlayerUnits.Add(entityToAdd);
                 entityToAdd.MoveToNextTrench(true);
             }
         }
-        public void DrawArtillery()
+        public static void DrawArtillery()
         {
-            PlayerArtillery = new Artillery(this)
+            PlayerArtillery = new Artillery
             {
                 PosX = 0,
                 PosY =400,
@@ -101,7 +102,7 @@ namespace MyGame.Model
             };
         }
 
-        public void CleanCorps(object sender, EventArgs e)
+        public static void CleanCorps(object sender, EventArgs e)
         {
             var newAllUnits = AllUnits.Where(x => x.IsReadyToClean == false).ToList();
             AllUnits.Clear();
@@ -116,13 +117,13 @@ namespace MyGame.Model
             EnemyUnits = newEnemyUnits;
         }
 
-        public void AddMoney(object sender, EventArgs e)
+        public static void AddMoney(object sender, EventArgs e)
         {
             Interface.PlayMoneySound();
             PlayerMoney += GetNumberOfPlayerTrenches()*35;
         }
 
-        public int GetNumberOfPlayerTrenches()
+        public static int GetNumberOfPlayerTrenches()
         {
             var result = 0;
             for (var i = Map.Trenches.Length - 1; i >= 0; i--)

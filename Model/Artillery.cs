@@ -12,8 +12,6 @@ namespace MyGame.Model
 {
     public class Artillery
     {
-        public GameModel GameModel;
-
         public int PosX;
         public int PosY;
         public Point Location => new Point(PosX, PosY);
@@ -32,10 +30,6 @@ namespace MyGame.Model
         public int CurrentFrame;
         public int CurrentLimit;
 
-        public Artillery(GameModel gameModel)
-        {
-            GameModel = gameModel;
-        }
         public void PlayAnimation(Graphics graphics)
         {
 
@@ -104,15 +98,7 @@ namespace MyGame.Model
             foreach (var unit in GameModel.AllUnits)
             {
                 if(GameModel.GetDistance(unit.Location,detonationDamageCenter) <= AmmoDamageDistance)
-                {
                     unit.IsAlive = 0;
-                    if (unit.IsEnemy)
-                        GameModel.EnemyKilled++;
-                    else
-                    {
-                        GameModel.PlayerUnitsKilled++;
-                    }
-                }
             }
         }
 
