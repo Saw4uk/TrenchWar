@@ -10,7 +10,7 @@ namespace MyGame.View
 {
     public static class Map
     {
-        public static Image MapImage = new Bitmap(Path.Combine(new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName,"Sprites\\Map.png"));
+        public static Image MapImage = new Bitmap(Path.Combine(Interface.CurrentDirectory, "Sprites\\Map.png"));
         public static int MapHeight = MapImage.Height;
         public static int MapWidth = MapImage.Width;
 

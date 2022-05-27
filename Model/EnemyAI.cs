@@ -4,34 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MyGame.Controller;
 using MyGame.View;
 
 namespace MyGame.Model
 {
-    public class EnemyAI
+    public enum Strategy
     {
-        public enum Strategy
-        {
-            PrepareToAttack,
-            Attack,
-            Defend,
-            Rush,
-            WaitOrders
-        }
-
-        public GameModel GameModel;
-        public ButtonController ButtonController;
-        private Timer EnemyOrdersLogicTimer;
-        private Random rnd = new Random();
-        public Strategy CurrentStrategy;
-
-        public EnemyAI(GameModel gameModel,ButtonController buttonController)
-        {
-            GameModel = gameModel;
-            ButtonController = buttonController;
-        }
-        public void StartWar()
+        PrepareToAttack,
+        Attack,
+        Defend,
+        Rush,
+        WaitOrders
+    }
+    public static class EnemyAI
+    {
+        private static Timer EnemyOrdersLogicTimer;
+        private static Random rnd = new Random();
+        public static Strategy CurrentStrategy;
+        public static void StartWar()
         {
 
             EnemyOrdersLogicTimer = new Timer();
@@ -43,7 +33,7 @@ namespace MyGame.Model
             SpawnEnemies(10);
         }
 
-        private void GetOrders(object sender, EventArgs e)
+        private static void GetOrders(object sender, EventArgs e)
         {
             switch (CurrentStrategy)
             {
@@ -70,7 +60,7 @@ namespace MyGame.Model
             SpawnEnemies(2);
         }
 
-        private Strategy GetStrategy()
+        private static Strategy GetStrategy()
         {
             if (GameModel.PlayerUnits.Count > GameModel.EnemyUnits.Count)
             {
@@ -94,7 +84,7 @@ namespace MyGame.Model
             }
         }
 
-        private void PrepareToAttack()
+        private static void PrepareToAttack()
         {
             if (GameModel.PlayerUnits.Count - GameModel.EnemyUnits.Count >= GameModel.EnemyUnits.Count / 2)
             {
@@ -110,7 +100,7 @@ namespace MyGame.Model
             
         }
 
-        private void Attack()
+        private static void Attack()
         {
             foreach (var unit in GameModel.EnemyUnits)
             {
@@ -119,7 +109,7 @@ namespace MyGame.Model
             SpawnEnemies(2);
         }
 
-        private void AllSuppliesToMainTrench()
+        private static void AllSuppliesToMainTrench()
         {
             var maxTrenchCord = GameModel.EnemyUnits.Where(x => Map.Trenches.Any(i => x.PosX <= i)).Min(x => x.PosX);
             foreach (var unit in GameModel.EnemyUnits)
@@ -127,7 +117,7 @@ namespace MyGame.Model
                 unit.MoveToAllyTrench(maxTrenchCord);
             }
         }
-        private void SpawnEnemies(int numberOfEnemies)
+        private static void SpawnEnemies(int numberOfEnemies)
         {
             for (var i = 0; i < numberOfEnemies; i++)
             {
@@ -135,9 +125,9 @@ namespace MyGame.Model
             }
         }
 
-        private void SpawnEnemyUnit()
+        private static void SpawnEnemyUnit()
         {
-            var entityToAdd = new Entity(GameModel)
+            var entityToAdd = new Entity
             {
                 PosX = Map.MapWidth - ViewGraphics.SpriteRectangleSize,
                 PosY = rnd.Next(ViewGraphics.SpriteRectangleSize + Interface.ButtonsHeight, Map.MapHeight - ViewGraphics.SpriteRectangleSize - Interface.ButtonsHeight),

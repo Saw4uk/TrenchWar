@@ -19,6 +19,11 @@ namespace MyGame
 {
     public partial class Form1 : Form
     {
+
+        private readonly GameModel GameModel;
+        private readonly ButtonController ButtonController;
+        private readonly EnemyAI EnemyAI;
+        private List<KeyValuePair<Entity, Button>> GunnersButtons = new List<KeyValuePair<Entity, Button>>();
         private Button LittleRiflemanSquadButton;
         private Button MiddleRiflemanSquadButton;
         private Button LargeRiflemanSquadButton;
@@ -40,8 +45,11 @@ namespace MyGame
         public Timer CleanCorpsTimer;
         public Timer AddMoneyTimer;
 
-        public Form1()
+        public Form1(GameModel gameModel, ButtonController buttonController, EnemyAI enemyAi)
         {
+            GameModel = gameModel;
+            ButtonController = buttonController;
+            EnemyAI = enemyAi;
             InitializeComponent();
             Init();
         }
@@ -75,8 +83,7 @@ namespace MyGame
 
         private void Update(object sender, EventArgs e)
         {
-
-
+            Button buttonToAdd;
             foreach (var unit in GameModel.AllUnits)
             {
                 unit.FindAndTryToKillEnemy();
@@ -87,8 +94,6 @@ namespace MyGame
                 if (unit.IsAlive == 0)
                 {
                     unit.DieWithHonor();
-                    if(unit.IsGunner)
-                        Controls.Remove(unit.GunnerButton);
                     continue;
                 }
 
@@ -142,15 +147,32 @@ namespace MyGame
                     unit.CurrentLimit = unit.IdleFrames;
                 }
 
-                if (unit.IsGunner && unit.IsAlive == 1)
-                {
-                    unit.GunnerButton.Location = new Point(unit.PosX - ViewGraphics.SpriteRectangleSize - 8, unit.PosY + ViewGraphics.SpriteRectangleSize - 16);
-                }
-
                 if (unit.IsGunner && !unit.IsButtonAddedToControls)
                 {
-                    Controls.Add(unit.GunnerButton);
+                    buttonToAdd = new Button
+                    {
+                        Location = new Point(unit.PosX - ViewGraphics.SpriteRectangleSize - 5,
+                            unit.PosY + 10),
+                        Size = new Size(20, 20),
+                        BackColor = Interface.EventsColor,
+                        Image = ViewGraphics.XPosChangeImage
+                    };
+                    buttonToAdd.Click += (o, args) =>
+                    {
+                        GameModel.GunnerWaitOrders = true;
+                        GameModel.CurrentGunner = unit;
+                    };
+                    Controls.Add(buttonToAdd);
+                    GunnersButtons.Add(new KeyValuePair<Entity, Button>(unit,buttonToAdd));
+                    unit.IsButtonAddedToControls = true;
                 }
+            }
+
+            foreach (var pair in GunnersButtons)
+            {
+                var unit = pair.Key;
+                pair.Value.Location = new Point(unit.PosX - ViewGraphics.SpriteRectangleSize - 5,
+                    unit.PosY + 10);
             }
             CheckInterface();
             PlayerMoneyLabel.Text = $"{GameModel.PlayerMoney}";
@@ -162,7 +184,7 @@ namespace MyGame
 
         public void CheckInterface()
         {
-            if (GameModel.PlayerMoney < 25 || ButtonController.PreparingToGetSupplies)
+            if (GameModel.PlayerMoney < 25 || GameModel.PreparingToGetSupplies)
             {
                 LittleRiflemanSquadButton.Enabled = false;
             }
@@ -171,7 +193,7 @@ namespace MyGame
                 LittleRiflemanSquadButton.Enabled = true;
             }
 
-            if (GameModel.PlayerMoney < 35 || ButtonController.PreparingToGetSupplies)
+            if (GameModel.PlayerMoney < 35 || GameModel.PreparingToGetSupplies)
             {
                 MiddleRiflemanSquadButton.Enabled = false;
             }
@@ -180,7 +202,7 @@ namespace MyGame
                 MiddleRiflemanSquadButton.Enabled = true;
             }
 
-            if (GameModel.PlayerMoney < 65 || ButtonController.PreparingToGetSupplies)
+            if (GameModel.PlayerMoney < 65 || GameModel.PreparingToGetSupplies)
             {
                 LargeRiflemanSquadButton.Enabled = false;
             }
@@ -189,7 +211,7 @@ namespace MyGame
                 LargeRiflemanSquadButton.Enabled = true;
             }
 
-            if (GameModel.PlayerMoney < 50 || GameModel.PlayerSecretDocuments < 1 || ButtonController.PreparingToGetSupplies)
+            if (GameModel.PlayerMoney < 50 || GameModel.PlayerSecretDocuments < 1 || GameModel.PreparingToGetSupplies)
             {
                 LittleGunnerSquadButton.Enabled = false;
             }
@@ -198,7 +220,7 @@ namespace MyGame
                 LittleGunnerSquadButton.Enabled = true;
             }
 
-            if (GameModel.PlayerMoney < 100 || GameModel.PlayerSecretDocuments < 1 || ButtonController.PreparingToGetSupplies)
+            if (GameModel.PlayerMoney < 100 || GameModel.PlayerSecretDocuments < 1 || GameModel.PreparingToGetSupplies)
             {
                 LargeGunnerSquadButton.Enabled = false;
             }
@@ -393,7 +415,7 @@ namespace MyGame
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            var spawnSizeConst = ButtonController.SpawnSizeConst;
+            var spawnSizeConst = GameModel.SpawnSizeConst;
             var graphics = e.Graphics;
 
             GameModel.PlayerArtillery.PlayAnimation(graphics);
@@ -405,41 +427,41 @@ namespace MyGame
 
             var mouseX = MousePosition.X - Location.X;
             var mouseY = MousePosition.Y - Location.Y - 7;
-            if (ButtonController.PreparingToGetSupplies)
+            if (GameModel.PreparingToGetSupplies)
             {
                 if (mouseY <= Interface.ButtonsHeight/2 + spawnSizeConst)
                 {
                     graphics.DrawLine(new Pen(Color.Gold, 3f),new Point(0, Interface.ButtonsHeight/2 + 2*spawnSizeConst),new Point(mouseX, Interface.ButtonsHeight/2 + 2*spawnSizeConst));
-                    ButtonController.LowerSuppliesPosition = Interface.ButtonsHeight + ViewGraphics.SpriteRectangleSize;
-                    ButtonController.UpperSuppliesPosition = Interface.ButtonsHeight + 2*spawnSizeConst;
+                    GameModel.LowerSuppliesPosition = Interface.ButtonsHeight + ViewGraphics.SpriteRectangleSize;
+                    GameModel.UpperSuppliesPosition = Interface.ButtonsHeight + 2*spawnSizeConst;
                 }
                 else if(mouseY >= Map.MapHeight + Interface.ButtonsHeight/2 - spawnSizeConst)
                 {
                     graphics.DrawLine(new Pen(Color.Gold, 3f), new Point(0, Map.MapHeight + Interface.ButtonsHeight/2 - 2*spawnSizeConst), new Point(mouseX, Map.MapHeight + Interface.ButtonsHeight/2 - 2*spawnSizeConst));
-                    ButtonController.LowerSuppliesPosition = Map.MapHeight - Interface.ButtonsHeight - spawnSizeConst*2 - ViewGraphics.SpriteRectangleSize;
-                    ButtonController.UpperSuppliesPosition = Map.MapHeight - Interface.ButtonsHeight;
+                    GameModel.LowerSuppliesPosition = Map.MapHeight - Interface.ButtonsHeight - spawnSizeConst*2 - ViewGraphics.SpriteRectangleSize;
+                    GameModel.UpperSuppliesPosition = Map.MapHeight - Interface.ButtonsHeight;
                 }
                 else
                 {
                     graphics.DrawLine(new Pen(Color.Gold, 3f), new Point(0, mouseY + spawnSizeConst), new Point(mouseX, mouseY + spawnSizeConst));
                     graphics.DrawLine(new Pen(Color.Gold, 3f), new Point(0, mouseY - spawnSizeConst), new Point(mouseX, mouseY - spawnSizeConst));
-                    ButtonController.UpperSuppliesPosition = mouseY + spawnSizeConst;
-                    ButtonController.LowerSuppliesPosition = mouseY - spawnSizeConst;
+                    GameModel.UpperSuppliesPosition = mouseY + spawnSizeConst;
+                    GameModel.LowerSuppliesPosition = mouseY - spawnSizeConst;
                 }
             }
 
-            if (ButtonController.GunnerWaitOrders)
+            if (GameModel.GunnerWaitOrders)
             {
                 if (mouseY >= Interface.ButtonsHeight / 2 && mouseY <= Map.MapHeight + Interface.ButtonsHeight)
                 {
                     graphics.DrawLine(new Pen(Color.Gold, 3f),
                         new Point(0, mouseY),
                         new Point(mouseX, mouseY));
-                    ButtonController.GunnerNewPosition = mouseY;
+                    GameModel.GunnerNewPosition = mouseY;
                 }
             }
 
-            if (ButtonController.IsWaitingForArtilleryFire)
+            if (GameModel.IsWaitingForArtilleryFire)
             {
                 graphics.DrawLine(new Pen(Color.Red, 3f), new Point(mouseX - 50, mouseY), new Point(mouseX + 50, mouseY));
                 graphics.DrawLine(new Pen(Color.Red, 3f), new Point(mouseX, mouseY + 50), new Point(mouseX, mouseY - 50));
