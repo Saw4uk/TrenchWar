@@ -13,4 +13,3 @@ C:\Users\Saw4uk\source\repos\TrenchWar\MyGame\obj\Debug\Game.csproj.GenerateReso
 C:\Users\Saw4uk\source\repos\TrenchWar\MyGame\obj\Debug\Game.csproj.CoreCompileInputs.cache
 C:\Users\Saw4uk\source\repos\TrenchWar\MyGame\obj\Debug\MyGame.exe
 C:\Users\Saw4uk\source\repos\TrenchWar\MyGame\obj\Debug\MyGame.pdb
-C:\Users\Saw4uk\source\repos\TrenchWar\MyGame\obj\Debug\MyGame.View.MenuForm.resources

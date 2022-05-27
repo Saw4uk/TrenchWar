@@ -42,7 +42,6 @@ namespace MyGame.View
         public static Image TrainingButtonImage = new Bitmap(Path.Combine(Interface.CurrentDirectory, "Sprites\\TrainingButton.png"));
         public static Image BackButtonImage = new Bitmap(Path.Combine(Interface.CurrentDirectory, "Sprites\\BackButton.png"));
         public static Image MovieButtonImage = new Bitmap(Path.Combine(Interface.CurrentDirectory, "Sprites\\Movie.png"));
-        public static Image LittleBackButtonImage = new Bitmap(Path.Combine(Interface.CurrentDirectory, "Sprites\\LittleBackButton.png"));
         public static string FullVideo = Path.Combine(Interface.CurrentDirectory, "Sprites\\FullVersion.wmv");
     }
 }

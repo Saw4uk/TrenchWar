@@ -21,7 +21,6 @@ namespace MyGame.Controller
 
         public void LittleRiflemanButtonOnClick(object sender, EventArgs e)
         {
-            Interface.PlayClickSound();
             GameModel.PlayerMoney -= 25;
             GameModel.PreparingToGetSupplies = true;
             GameModel.NumOfRiflemansToSupply = 3;
@@ -31,7 +30,6 @@ namespace MyGame.Controller
 
         public void MiddleRiflemanButtonOnClick(object sender, EventArgs e)
         {
-            Interface.PlayClickSound();
             GameModel.PlayerMoney -= 35;
             GameModel.PreparingToGetSupplies = true;
             GameModel.NumOfRiflemansToSupply = 5;
@@ -41,7 +39,6 @@ namespace MyGame.Controller
 
         public void LargeRiflemanButtonOnClick(object sender, EventArgs e)
         {
-            Interface.PlayClickSound();
             GameModel.PlayerMoney -= 65;
             GameModel.PreparingToGetSupplies = true;
             GameModel.NumOfRiflemansToSupply = 10;
@@ -101,7 +98,6 @@ namespace MyGame.Controller
 
         public void LittleGunnerSquadButtonOnClick(object sender, EventArgs e)
         {
-            Interface.PlayClickSound();
             GameModel.PlayerMoney -= 50;
             GameModel.PlayerSecretDocuments -= 1;
             GameModel.PreparingToGetSupplies = true;
@@ -112,7 +108,6 @@ namespace MyGame.Controller
 
         public void LargeGunnerSquadButtonOnClick(object sender, EventArgs e)
         {
-            Interface.PlayClickSound();
             GameModel.PlayerMoney -= 100;
             GameModel.PlayerSecretDocuments -= 1;
             GameModel.PreparingToGetSupplies = true;
@@ -124,7 +119,6 @@ namespace MyGame.Controller
 
         public void ArtilleryFireButtonOnClick(object sender, EventArgs e)
         {
-            Interface.PlayMorzeSound();
             GameModel.IsWaitingForArtilleryFire = true;
             GameModel.PlayerArtillery.OrderedShoots = 1;
             GameModel.PlayerArtillery.FireAccuracy = 30;
@@ -135,7 +129,6 @@ namespace MyGame.Controller
 
         public void ArtilleryThreeFireButtonOnClick(object sender, EventArgs e)
         {
-            Interface.PlayMorzeSound();
             GameModel.IsWaitingForArtilleryFire = true;
             GameModel.PlayerArtillery.OrderedShoots = 3;
             GameModel.PlayerArtillery.FireAccuracy = 100;
