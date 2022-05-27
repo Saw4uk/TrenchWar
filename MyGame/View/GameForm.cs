@@ -28,6 +28,7 @@ namespace MyGame
         private Button MiddleRiflemanSquadButton;
         private Button LargeRiflemanSquadButton;
         private Button LittleGunnerSquadButton;
+        private Button LittleBackButton;
         private Button LargeGunnerSquadButton;
         private Button AttackButton;
         private Button FallBackButton;
@@ -405,13 +406,27 @@ namespace MyGame
             {
                 Text = $"Ваши потери : {GameModel.PlayerUnitsKilled} ч. \nПотери противника : {GameModel.EnemyKilled} ч.",
                 Height = Interface.ButtonsHeight / 2,
-                Width = Interface.ButtonsWidth * 3,
+                Width = Interface.ButtonsWidth * 4 + 60,
                 TextAlign = ContentAlignment.MiddleLeft,
                 BackColor = Interface.ButtonsColor,
                 Font = Interface.MainFont
             };
             UpperInterfacePanel.Controls.Add(InfoLabel);
+
+            LittleBackButton = new Button
+            {
+                Image = ViewGraphics.LittleBackButtonImage,
+                Height = ViewGraphics.LittleBackButtonImage.Height,
+                Width = ViewGraphics.LittleBackButtonImage.Width
+            };
+            LittleBackButton.Click += (sender, args) =>
+            {
+                Interface.PlayClickSound();
+                Close();
+            };
+            UpperInterfacePanel.Controls.Add(LittleBackButton);
         }
+
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
@@ -469,5 +484,16 @@ namespace MyGame
             }
         }
 
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            UpdateTimer.Tick -= Update;
+            CleanCorpsTimer.Tick -= GameModel.CleanCorps;
+            AddMoneyTimer.Tick -= GameModel.AddMoney;
+            var form = Application.OpenForms[0];
+            form.StartPosition = FormStartPosition.Manual;
+            form.Top = Top;
+            form.Left = Left;
+            form.Show();
+        }
     }
 }

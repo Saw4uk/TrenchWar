@@ -13,7 +13,7 @@ using MyGame.Model;
 
 namespace MyGame.View
 {
-    public partial class Form2 : Form
+    public partial class MenuForm : Form
     {
         private Button PlayButton;
         private Button SettingsButton;
@@ -21,8 +21,7 @@ namespace MyGame.View
         private Button PlayVideoButton;
         private Button TrainingButton;
         private Button BackButton;
-        public SoundPlayer ButtonClickPlayer;
-        public Form2()
+        public MenuForm()
         {
             InitializeComponent();
             Init();
@@ -30,6 +29,7 @@ namespace MyGame.View
 
         public void Init()
         {
+            axWindowsMediaPlayer1.Hide();
             MakeFormBorders();
             SetFirstTypeOfInterface();
             Interface.PlayMusic();
@@ -69,7 +69,7 @@ namespace MyGame.View
 
         private void SettingsButtonOnClick(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Interface.PlayClickSound();
         }
 
         private void SetSecondTypeOfInterface()
@@ -83,7 +83,7 @@ namespace MyGame.View
                 Size = ViewGraphics.MovieButtonImage.Size,
                 Image = ViewGraphics.MovieButtonImage
             };
-            PlayVideoButton.Click += StudingButtonOnClick;
+            PlayVideoButton.Click += PlayVideoButtonOnClick;
             Controls.Add(PlayVideoButton);
 
             TrainingButton = new Button
@@ -105,8 +105,17 @@ namespace MyGame.View
             Controls.Add(BackButton);
         }
 
+        private void PlayVideoButtonOnClick(object sender, EventArgs e)
+        {
+            Interface.MainPlayer.Pause();
+            axWindowsMediaPlayer1.openPlayer(ViewGraphics.FullVideo);
+            Interface.PlayClickSound();
+        }
+
         public void BackButtonOnClick(object sender, EventArgs e)
-        { 
+        {
+            Interface.MainPlayer.Play();
+            Interface.PlayClickSound();
             PlayVideoButton.Hide(); 
             TrainingButton.Hide(); 
             BackButton.Hide();
@@ -115,17 +124,18 @@ namespace MyGame.View
 
         public void TrainingButtonOnClick(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Interface.PlayClickSound();
         }
 
         private void StudingButtonOnClick(object sender, EventArgs e)
         {
+            Interface.PlayClickSound();
             SetSecondTypeOfInterface();
         }
 
         private void PlayButtonOnClick(object sender, EventArgs e)
         {
-            ActiveForm?.Hide();
+            Interface.PlayClickSound();
             var gameModel = new GameModel();
             var buttonController = new ButtonController(gameModel);
             var enemyAi = new EnemyAI(gameModel, buttonController);
@@ -133,9 +143,10 @@ namespace MyGame.View
             {
                 Location = new Point(Location.X, Location.Y)
             };
-            game.TopMost = true;
-            game.ShowDialog();
-            Close();
+            game.Top = Top;
+            game.Left = Left;
+            game.Show();
+            Hide();
         }
 
         public void MakeFormBorders()

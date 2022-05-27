@@ -8,8 +8,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Media;
 using AxWMPLib;
-using MyGame.Controller;
-using MyGame.Model;
 
 namespace MyGame.View
 {
@@ -126,10 +124,7 @@ namespace MyGame.View
         private void PlayButtonOnClick(object sender, EventArgs e)
         {
             ActiveForm?.Hide();
-            var gameModel = new GameModel();
-            var buttonController = new ButtonController(gameModel);
-            var enemyAi = new EnemyAI(gameModel, buttonController);
-            var game = new Form1(gameModel,buttonController,enemyAi)
+            var game = new Form1
             {
                 Location = new Point(Location.X, Location.Y)
             };
